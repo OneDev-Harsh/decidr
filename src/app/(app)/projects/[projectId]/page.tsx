@@ -6,10 +6,11 @@ import { useParams, useRouter } from "next/navigation";
 import { insforge } from "@/lib/insforge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Edit, FileText, Database, GitMerge, CheckCircle, Target, Loader2 } from "lucide-react";
+import { ArrowLeft, Edit, FileText, Database, GitMerge, CheckCircle, Target, Loader2, EyeOff } from "lucide-react";
 import { EvidenceManager } from "@/components/app/EvidenceManager";
 import { ScenarioMatrix } from "@/components/app/ScenarioMatrix";
 import { RecommendationView } from "@/components/app/RecommendationView";
+import { BlindspotAnalysis } from "@/components/app/BlindspotAnalysis";
 
 export default function ProjectPage() {
   const params = useParams();
@@ -85,6 +86,7 @@ export default function ProjectPage() {
   const tabs = [
     { id: "context", name: "Context & Goals", icon: Target },
     { id: "evidence", name: "Evidence & Sources", icon: Database },
+    { id: "blindspots", name: "Blindspot Audit", icon: EyeOff },
     { id: "scenarios", name: "Scenarios", icon: GitMerge },
     { id: "recommendation", name: "Recommendation", icon: CheckCircle },
   ];
@@ -120,18 +122,18 @@ export default function ProjectPage() {
           </div>
         </div>
 
-        <div className="mt-8 flex space-x-1">
+        <div className="mt-8 flex space-x-1 overflow-x-auto no-scrollbar">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors ${
+              className={`flex items-center px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap ${
                 activeTab === tab.id
                   ? "bg-[#050505] text-white border-t border-l border-r border-white/10"
                   : "text-gray-400 hover:text-white hover:bg-white/5"
               }`}
             >
-              <tab.icon className={`mr-2 h-4 w-4 ${activeTab === tab.id ? "text-brand-crimson" : ""}`} />
+              <tab.icon className={`mr-2 h-4 w-4 ${activeTab === tab.id ? (tab.id === 'blindspots' ? "text-amber-500" : "text-brand-crimson") : ""}`} />
               {tab.name}
             </button>
           ))}
@@ -147,7 +149,7 @@ export default function ProjectPage() {
                 <input name="title" defaultValue={project.title} className="w-full bg-white/5 border border-white/10 rounded-md px-3 py-2 text-white" required />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-400">Description</label>
+                <label className="text-sm font-medium text-gray-300">Description</label>
                 <input name="description" defaultValue={project.description} className="w-full bg-white/5 border border-white/10 rounded-md px-3 py-2 text-white" />
               </div>
             </div>
@@ -195,6 +197,10 @@ export default function ProjectPage() {
 
             {activeTab === "evidence" && (
               <EvidenceManager projectId={projectId} />
+            )}
+
+            {activeTab === "blindspots" && (
+              <BlindspotAnalysis project={project} />
             )}
 
             {activeTab === "scenarios" && (

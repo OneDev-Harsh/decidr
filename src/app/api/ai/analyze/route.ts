@@ -36,11 +36,19 @@ Generate 3 distinct scenarios. For each scenario, provide:
 3. pros (array of strings)
 4. cons (array of strings)
 5. riskLevel (string: "Low", "Medium", or "High")
+6. scores (object: { "Feasibility": 0-10, "Impact": 0-10, "Cost": 0-10, "Risk": 0-10, "Alignment": 0-10 })
 
 Ensure the output is valid JSON matching this structure:
 {
   "scenarios": [
-    { "title": "...", "description": "...", "pros": ["..."], "cons": ["..."], "riskLevel": "..." }
+    { 
+      "title": "...", 
+      "description": "...", 
+      "pros": ["..."], 
+      "cons": ["..."], 
+      "riskLevel": "...",
+      "scores": { "Feasibility": 8, "Impact": 9, "Cost": 5, "Risk": 3, "Alignment": 10 }
+    }
   ]
 }
       `;
@@ -67,6 +75,31 @@ Ensure the output is valid JSON matching this structure:
   "rationale": "...",
   "confidenceScore": 85,
   "keyRisks": ["..."]
+}
+      `;
+    } else if (action === 'blindspots') {
+      systemPrompt = `You are a Critical Thinking Agent and Cognitive Bias Expert. Your job is to find what is MISSING or BIASED in this decision project. Identify 3-4 blindspots, hidden risks, or missing evidence types. Format your response as a JSON object with a 'blindspots' array.`;
+      
+      userPrompt = `
+Project Title: ${project.title}
+Project Description/Context: ${project.description || 'Not provided'}
+Problem Statement: ${project.problem_statement || 'Not provided'}
+Goals: ${project.goals || 'Not provided'}
+
+Evidence:
+${evidenceText || 'No evidence provided.'}
+
+Analyze for blindspots and biases. For each blindspot, provide:
+1. title (string)
+2. description (string) - Why this is a blindspot.
+3. type (string) - e.g., "Cognitive Bias", "Data Gap", "Strategic Risk"
+4. mitigation (string) - How to address it.
+
+Ensure the output is valid JSON matching this structure:
+{
+  "blindspots": [
+    { "title": "...", "description": "...", "type": "...", "mitigation": "..." }
+  ]
 }
       `;
     } else {

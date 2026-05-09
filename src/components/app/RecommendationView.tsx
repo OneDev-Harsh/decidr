@@ -45,6 +45,17 @@ export function RecommendationView({ project }: { project: any }) {
         .update({ last_recommendation: data })
         .eq('id', project.id);
 
+      // Log activity
+      const { data: userData } = await insforge.auth.getCurrentUser();
+      await insforge.database
+        .from('project_activity')
+        .insert({
+          project_id: project.id,
+          user_id: userData.user?.id,
+          action: 'generate_recommendation',
+          details: { confidence: data.confidenceScore }
+        });
+
     } catch (err: any) {
       setError(err.message);
     } finally {

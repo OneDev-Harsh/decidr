@@ -12,6 +12,7 @@ interface Scenario {
   pros: string[];
   cons: string[];
   riskLevel: string;
+  scores?: Record<string, number>;
 }
 
 export function ScenarioMatrix({ project }: { project: any }) {
@@ -46,6 +47,17 @@ export function ScenarioMatrix({ project }: { project: any }) {
         .from('projects')
         .update({ last_scenarios: newScenarios })
         .eq('id', project.id);
+
+      // Log activity
+      const { data: userData } = await insforge.auth.getCurrentUser();
+      await insforge.database
+        .from('project_activity')
+        .insert({
+          project_id: project.id,
+          user_id: userData.user?.id,
+          action: 'generate_scenarios',
+          details: { count: newScenarios.length }
+        });
 
     } catch (err: any) {
       setError(err.message);
@@ -142,6 +154,32 @@ export function ScenarioMatrix({ project }: { project: any }) {
                   ))}
                 </ul>
               </div>
+
+              {scenario.scores && (
+                <div className="border-t border-white/5 pt-4">
+                  <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Impact Scorecard</h4>
+                  <div className="space-y-2">
+                    {Object.entries(scenario.scores).map(([key, value]) => (
+                      <div key={key}>
+                        <div className="flex justify-between text-[10px] mb-1">
+                          <span className="text-gray-400">{key}</span>
+                          <span className="text-white font-medium">{value}/10</span>
+                        </div>
+                        <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full rounded-full ${
+                              value >= 8 ? 'bg-emerald-500' : 
+                              value >= 5 ? 'bg-amber-500' : 
+                              'bg-brand-crimson'
+                            }`}
+                            style={{ width: `${value * 10}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         ))}
