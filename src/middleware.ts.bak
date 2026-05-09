@@ -1,0 +1,29 @@
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/request';
+
+export function middleware(request: NextRequest) {
+  // For now, we'll implement a simple check. 
+  // In a production app, you'd verify the JWT or session cookie.
+  // Insforge SDK stores the session in 'insforge-session' or similar if configured.
+  // For this MVP, we'll check for an 'insforge-auth-token' or similar cookie.
+  
+  const token = request.cookies.get('insforge-auth-token')?.value;
+  const isAuthPage = request.nextUrl.pathname.startsWith('/login') || 
+                     request.nextUrl.pathname.startsWith('/signup');
+  const isDashboardPage = request.nextUrl.pathname.startsWith('/dashboard') ||
+                          request.nextUrl.pathname.startsWith('/workspaces');
+
+  if (isDashboardPage && !token) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  if (isAuthPage && token) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ['/dashboard/:path*', '/workspaces/:path*', '/login', '/signup'],
+};
