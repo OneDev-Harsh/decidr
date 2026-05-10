@@ -26,20 +26,20 @@ export default function WorkspacesPage() {
 
   if (loading) {
     return (
-      <div className="flex-1 p-8 flex items-center justify-center min-h-screen">
-        <Loader2 className="h-12 w-12 text-brand-crimson animate-spin" />
+      <div className="flex-1 p-12 flex items-center justify-center min-h-screen bg-black">
+        <Loader2 className="h-5 w-5 animate-spin text-zinc-500" />
       </div>
     );
   }
 
   return (
-    <div className="flex-1 p-8">
-      <div className="flex items-center justify-between mb-8">
+    <div className="flex-1 px-8 py-10 max-w-[1200px] mx-auto min-h-screen bg-black">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">Workspaces</h1>
-          <p className="text-gray-400 mt-1">Manage your team environments and shared decision assets.</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-white mb-1">Workspaces</h1>
+          <p className="text-[14px] text-zinc-400">Manage your team environments and shared decision assets.</p>
         </div>
-        <Button asChild className="bg-brand-maroon hover:bg-brand-crimson">
+        <Button asChild className="bg-white hover:bg-zinc-200 text-black font-medium px-4 h-9 border-none transition-colors rounded-md shadow-sm">
           <Link href="/workspaces/new">
             <Plus className="mr-2 h-4 w-4" /> New Workspace
           </Link>
@@ -47,41 +47,39 @@ export default function WorkspacesPage() {
       </div>
 
       {workspaces.length === 0 ? (
-        <Card className="bg-white/5 border-white/10 p-12 text-center border-dashed">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-maroon/20 mb-4">
-            <Briefcase className="h-6 w-6 text-brand-crimson" />
+        <div className="py-16 text-center border border-white/10 rounded-lg bg-[#0a0a0a]">
+          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-white/5 mb-4">
+            <Briefcase className="h-5 w-5 text-zinc-400" />
           </div>
-          <h3 className="mt-2 text-sm font-semibold text-white">No workspaces found</h3>
-          <p className="mt-1 text-sm text-gray-400">Get started by creating your first team workspace.</p>
-          <div className="mt-6">
-            <Button asChild>
-              <Link href="/workspaces/new">
-                <Plus className="mr-2 h-4 w-4" /> Create First Workspace
-              </Link>
-            </Button>
-          </div>
-        </Card>
+          <h3 className="text-[14px] font-medium text-white mb-1">No workspaces found</h3>
+          <p className="text-[13px] text-zinc-500 mb-6">Get started by creating your first team workspace.</p>
+          <Button asChild className="bg-white hover:bg-zinc-200 text-black font-medium transition-colors">
+            <Link href="/workspaces/new">
+              <Plus className="mr-2 h-4 w-4" /> Create Workspace
+            </Link>
+          </Button>
+        </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {workspaces.map((ws) => (
             <Link key={ws.id} href={`/workspaces/${ws.id}`}>
-              <Card className="bg-white/5 border-white/10 hover:border-brand-maroon/50 transition-all cursor-pointer group h-full">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="h-10 w-10 rounded bg-brand-maroon flex items-center justify-center mb-2">
-                      <span className="text-white font-bold">{ws.name.charAt(0)}</span>
+              <div className="bg-[#0a0a0a] border border-white/10 p-5 rounded-lg hover:border-white/20 transition-all group h-full flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="h-8 w-8 rounded border border-white/10 flex items-center justify-center bg-white/5">
+                      <span className="text-white font-medium text-[13px]">{ws.name.charAt(0)}</span>
                     </div>
-                    <ChevronRight className="h-5 w-5 text-gray-600 group-hover:text-brand-crimson transition-colors" />
+                    <ChevronRight className="h-4 w-4 text-zinc-600 group-hover:text-white transition-colors" />
                   </div>
-                  <CardTitle className="text-xl text-white">{ws.name}</CardTitle>
-                  <CardDescription className="text-gray-400">
+                  <h3 className="text-[15px] font-medium text-white mb-1">{ws.name}</h3>
+                  <p className="text-[13px] text-zinc-400 mb-4 line-clamp-2">Shared workspace for cross-functional decision intelligence.</p>
+                </div>
+                <div className="pt-4 border-t border-white/[0.05]">
+                  <p className="text-[12px] text-zinc-500">
                     Created {new Date(ws.created_at).toLocaleDateString()}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-gray-500">Shared workspace for cross-functional decision intelligence.</p>
-                </CardContent>
-              </Card>
+                  </p>
+                </div>
+              </div>
             </Link>
           ))}
         </div>

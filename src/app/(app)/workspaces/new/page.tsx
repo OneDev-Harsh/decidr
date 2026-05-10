@@ -70,51 +70,60 @@ export default function NewWorkspacePage() {
   }
 
   return (
-    <div className="flex-1 p-8 max-w-2xl mx-auto">
-      <div className="mb-6">
-        <Link href="/dashboard" className="text-sm font-medium text-gray-400 hover:text-white flex items-center transition-colors">
+    <div className="flex-1 px-8 py-12 max-w-2xl mx-auto min-h-screen bg-black">
+      <div className="mb-8">
+        <Link href="/dashboard" className="text-[13px] font-medium text-zinc-500 hover:text-white flex items-center transition-colors w-fit">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Dashboard
         </Link>
       </div>
 
-      <Card className="bg-white/5 border-white/10">
-        <CardHeader>
-          <CardTitle className="text-2xl text-white">Create a Workspace</CardTitle>
-          <CardDescription className="text-gray-400">
-            A workspace is a shared environment for your team's decision projects.
-          </CardDescription>
-        </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="name" className="text-sm font-medium text-gray-300">
-                Workspace Name
-              </label>
-              <Input
-                id="name"
-                name="name"
-                placeholder="e.g. Acme Corp Strategy"
-                required
-                className="max-w-md"
-              />
-            </div>
-            {error && (
-              <div className="text-sm text-brand-crimson font-medium bg-brand-crimson/10 p-3 rounded-md border border-brand-crimson/20">
-                {error}
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight text-white mb-2">Create a Workspace</h1>
+        <p className="text-[14px] text-zinc-400 mb-8">
+          A workspace is a shared environment for your team's decision projects.
+        </p>
+
+        <div className="bg-[#0a0a0a] border border-white/10 rounded-xl overflow-hidden">
+          <form onSubmit={handleSubmit} className="p-8">
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <label htmlFor="name" className="text-[13px] font-medium text-zinc-300">
+                  Workspace Name
+                </label>
+                <Input
+                  id="name"
+                  name="name"
+                  placeholder="e.g. Acme Corp Strategy"
+                  required
+                  className="bg-black border-white/10 text-white placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-white/20 h-10 w-full"
+                />
               </div>
-            )}
-          </CardContent>
-          <CardFooter className="flex justify-end gap-4 border-t border-white/5 pt-6 mt-6">
-            <Button variant="ghost" type="button" asChild>
-              <Link href="/dashboard">Cancel</Link>
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create Workspace
-            </Button>
-          </CardFooter>
-        </form>
-      </Card>
+              
+              {error && (
+                <div className="text-[13px] text-red-400 bg-red-400/10 px-4 py-3 rounded-lg border border-red-400/20">
+                  {error}
+                </div>
+              )}
+              
+              <div className="pt-2">
+                <Button 
+                  type="submit" 
+                  disabled={loading}
+                  className="bg-white hover:bg-zinc-200 text-black font-medium transition-colors h-10 w-full sm:w-auto px-6"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin text-zinc-500" /> Creating...
+                    </>
+                  ) : (
+                    "Create Workspace"
+                  )}
+                </Button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }

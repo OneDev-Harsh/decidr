@@ -57,80 +57,76 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="flex-1 p-8 flex items-center justify-center min-h-screen">
-        <Loader2 className="h-12 w-12 text-brand-crimson animate-spin" />
+      <div className="flex-1 p-12 flex items-center justify-center min-h-screen bg-black">
+        <Loader2 className="h-5 w-5 animate-spin text-zinc-500" />
       </div>
     );
   }
 
   return (
-    <div className="flex-1 p-8 max-w-4xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-white">Settings</h1>
-        <p className="text-gray-400 mt-1">Manage your account preferences and security settings.</p>
+    <div className="flex-1 px-8 py-10 max-w-[800px] mx-auto min-h-screen bg-black">
+      <div className="mb-10">
+        <h1 className="text-2xl font-semibold tracking-tight text-white mb-1">Settings</h1>
+        <p className="text-[14px] text-zinc-400">Manage your account preferences and security settings.</p>
       </div>
 
-      <div className="grid gap-8">
-        <Card className="bg-white/5 border-white/10">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <User className="h-5 w-5 text-brand-crimson" />
-              <CardTitle className="text-white">Profile Information</CardTitle>
+      <div className="space-y-8">
+        <div className="bg-[#0a0a0a] border border-white/10 rounded-xl overflow-hidden">
+          <div className="p-6 border-b border-white/[0.05]">
+            <div className="flex items-center gap-2 mb-1">
+              <User className="h-4 w-4 text-zinc-400" />
+              <h2 className="text-[15px] font-medium text-white">Profile Information</h2>
             </div>
-            <CardDescription className="text-gray-400">Update your public name and contact email.</CardDescription>
-          </CardHeader>
-          <form onSubmit={handleSave}>
-            <CardContent className="space-y-4">
-              <div className="grid gap-2">
-                <label className="text-sm font-medium text-gray-300">Full Name</label>
-                <Input name="name" defaultValue={profile?.full_name || user?.name} className="max-w-md" />
+            <p className="text-[13px] text-zinc-500">Update your public name and contact email.</p>
+          </div>
+          <form onSubmit={handleSave} className="p-6">
+            <div className="space-y-5">
+              <div className="space-y-2">
+                <label className="text-[13px] font-medium text-zinc-300">Full Name</label>
+                <Input name="name" defaultValue={profile?.full_name || user?.name} className="max-w-md bg-black border-white/10 text-white placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-white/20 h-10" />
               </div>
-              <div className="grid gap-2">
-                <label className="text-sm font-medium text-gray-300">Email Address</label>
-                <Input value={user?.email} disabled className="max-w-md opacity-50 cursor-not-allowed" />
-                <p className="text-xs text-gray-500">Email cannot be changed directly.</p>
+              <div className="space-y-2">
+                <label className="text-[13px] font-medium text-zinc-300">Email Address</label>
+                <Input value={user?.email} disabled className="max-w-md bg-black border-white/10 text-white/50 opacity-60 cursor-not-allowed h-10" />
+                <p className="text-[12px] text-zinc-500 mt-1">Email cannot be changed directly.</p>
               </div>
               {message && (
-                <div className={`text-sm font-medium p-3 rounded-md border ${
-                  message.includes('Error') ? 'bg-brand-crimson/10 text-brand-crimson border-brand-crimson/20' : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+                <div className={`text-[13px] px-4 py-3 rounded-lg border ${
+                  message.includes('Error') ? 'bg-red-400/10 text-red-400 border-red-400/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                 }`}>
                   {message}
                 </div>
               )}
-            </CardContent>
-            <CardFooter className="border-t border-white/5 pt-6">
-              <Button type="submit" disabled={saving}>
-                {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Save Changes
+            </div>
+            <div className="mt-6">
+              <Button type="submit" disabled={saving} className="bg-white hover:bg-zinc-200 text-black font-medium transition-colors h-9 px-4 rounded-md">
+                {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin text-zinc-500" />} Save Changes
               </Button>
-            </CardFooter>
+            </div>
           </form>
-        </Card>
+        </div>
 
-        <Card className="bg-white/5 border-white/10 opacity-50 grayscale">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-gray-400" />
-              <CardTitle className="text-white">Security & API</CardTitle>
+        <div className="bg-[#0a0a0a] border border-white/10 rounded-xl overflow-hidden opacity-50">
+          <div className="p-6">
+            <div className="flex items-center gap-2 mb-1">
+              <Shield className="h-4 w-4 text-zinc-400" />
+              <h2 className="text-[15px] font-medium text-white">Security & API</h2>
             </div>
-            <CardDescription className="text-gray-400">Manage your password and API access keys.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-500 italic">Advanced security settings coming in the next release.</p>
-          </CardContent>
-        </Card>
+            <p className="text-[13px] text-zinc-500 mb-4">Manage your password and API access keys.</p>
+            <p className="text-[12px] text-zinc-600 italic">Advanced security settings coming in the next release.</p>
+          </div>
+        </div>
 
-        <Card className="bg-white/5 border-white/10 opacity-50 grayscale">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              < Bell className="h-5 w-5 text-gray-400" />
-              <CardTitle className="text-white">Notifications</CardTitle>
+        <div className="bg-[#0a0a0a] border border-white/10 rounded-xl overflow-hidden opacity-50">
+          <div className="p-6">
+            <div className="flex items-center gap-2 mb-1">
+              <Bell className="h-4 w-4 text-zinc-400" />
+              <h2 className="text-[15px] font-medium text-white">Notifications</h2>
             </div>
-            <CardDescription className="text-gray-400">Configure how you receive intelligence alerts.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-500 italic">Notification preferences coming soon.</p>
-          </CardContent>
-        </Card>
+            <p className="text-[13px] text-zinc-500 mb-4">Configure how you receive intelligence alerts.</p>
+            <p className="text-[12px] text-zinc-600 italic">Notification preferences coming soon.</p>
+          </div>
+        </div>
       </div>
     </div>
   );

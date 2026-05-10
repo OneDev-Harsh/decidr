@@ -70,7 +70,6 @@ export function Sidebar() {
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    //{ name: "Search", href: "#", icon: Search, shortcut: "⌘K" },
     { name: "Workspaces", href: "/workspaces", icon: FolderKanban },
     { name: "Settings", href: "/settings", icon: Settings },
   ];
@@ -78,25 +77,25 @@ export function Sidebar() {
   return (
     <motion.div 
       initial={false}
-      animate={{ width: isCollapsed ? 80 : 256 }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="flex h-screen flex-col border-r border-white/5 bg-black relative"
+      animate={{ width: isCollapsed ? 64 : 240 }}
+      transition={{ duration: 0.2, ease: "easeInOut" }}
+      className="flex h-screen flex-col border-r border-white/10 bg-[#0a0a0a] relative"
     >
-      <div className="flex h-16 shrink-0 items-center px-6 border-b border-white/5 justify-between">
+      <div className="flex h-14 shrink-0 items-center px-4 justify-between">
         <AnimatePresence mode="wait">
           {!isCollapsed ? (
             <motion.div 
               key="logo"
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               className="flex items-center gap-2"
             >
-              <Link href="/dashboard" className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded bg-brand-maroon flex items-center justify-center shrink-0">
-                  <span className="text-white font-bold">D</span>
+              <Link href="/dashboard" className="flex items-center gap-2.5">
+                <div className="h-6 w-6 rounded-md bg-white flex items-center justify-center shrink-0">
+                  <span className="text-black font-bold text-xs">D</span>
                 </div>
-                <span className="text-xl font-bold tracking-tight text-white">Decidr</span>
+                <span className="text-[15px] font-semibold text-white">Decidr</span>
               </Link>
             </motion.div>
           ) : (
@@ -107,8 +106,8 @@ export function Sidebar() {
               exit={{ opacity: 0 }}
               className="mx-auto"
             >
-              <div className="h-8 w-8 rounded bg-brand-maroon flex items-center justify-center">
-                <span className="text-white font-bold">D</span>
+              <div className="h-6 w-6 rounded-md bg-white flex items-center justify-center">
+                <span className="text-black font-bold text-xs">D</span>
               </div>
             </motion.div>
           )}
@@ -119,41 +118,35 @@ export function Sidebar() {
         variant="ghost"
         size="icon"
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-20 h-6 w-6 rounded-full border border-white/10 bg-black text-gray-400 hover:text-white z-50 shadow-lg"
+        className="absolute -right-3 top-16 h-6 w-6 rounded-full border border-white/10 bg-[#0a0a0a] text-zinc-400 hover:text-white z-50 shadow-sm"
       >
         {isCollapsed ? <Menu className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
       </Button>
 
-      <div className="flex flex-1 flex-col overflow-y-auto px-4 py-4">
-        <nav className="flex-1 space-y-1">
+      <div className="flex flex-1 flex-col overflow-y-auto px-3 py-4">
+        <nav className="flex-1 space-y-0.5">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
                 key={item.name}
                 href={item.href}
-                className={`group flex items-center rounded-md px-2 py-2 text-sm font-medium ${
+                className={`group flex items-center rounded-md px-2.5 py-1.5 text-[14px] transition-colors ${
                   isActive
-                    ? "bg-brand-maroon/20 text-brand-crimson"
-                    : "text-gray-400 hover:bg-white/5 hover:text-white"
+                    ? "bg-white/10 text-white font-medium"
+                    : "text-zinc-400 hover:bg-white/5 hover:text-white"
                 } ${isCollapsed ? "justify-center" : ""}`}
                 title={isCollapsed ? item.name : ""}
               >
                 <item.icon
-                  className={`h-5 w-5 flex-shrink-0 ${
-                    isActive ? "text-brand-crimson" : "text-gray-400 group-hover:text-white"
+                  strokeWidth={isActive ? 2.5 : 2}
+                  className={`h-4 w-4 flex-shrink-0 ${
+                    isActive ? "text-white" : "text-zinc-400 group-hover:text-white"
                   } ${!isCollapsed ? "mr-3" : ""}`}
                   aria-hidden="true"
                 />
                 {!isCollapsed && (
-                  <div className="flex-1 flex items-center justify-between">
-                    <span>{item.name}</span>
-                    {item.shortcut && (
-                      <span className="text-[10px] text-gray-700 font-mono group-hover:text-gray-500 transition-colors">
-                        {item.shortcut}
-                      </span>
-                    )}
-                  </div>
+                  <span>{item.name}</span>
                 )}
               </Link>
             );
@@ -161,38 +154,40 @@ export function Sidebar() {
 
           <div className="mt-8">
             {!isCollapsed && (
-              <div className="flex items-center justify-between px-2 py-2">
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+              <div className="flex items-center justify-between px-2.5 py-2">
+                <h3 className="text-[11px] font-medium text-zinc-500">
                   Workspaces
                 </h3>
-                <Link href="/workspaces/new" className="text-gray-400 hover:text-white transition-colors">
-                  <Plus className="h-4 w-4" />
+                <Link href="/workspaces/new" className="text-zinc-500 hover:text-white transition-colors">
+                  <Plus className="h-3.5 w-3.5" />
                 </Link>
               </div>
             )}
-            <div className={`mt-2 space-y-1 ${isCollapsed ? "flex flex-col items-center" : ""}`}>
+            <div className={`mt-1 space-y-0.5 ${isCollapsed ? "flex flex-col items-center" : ""}`}>
               {loading ? (
                 !isCollapsed && (
-                  <div className="px-2 py-2 text-sm text-gray-500 flex items-center">
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  <div className="px-2.5 py-1.5 text-[13px] text-zinc-500 flex items-center">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin mr-2" />
                     Loading...
                   </div>
                 )
               ) : workspaces.length === 0 ? (
-                !isCollapsed && <div className="px-2 py-2 text-sm text-gray-500">No workspaces yet.</div>
+                !isCollapsed && <div className="px-2.5 py-1.5 text-[13px] text-zinc-500">No workspaces yet.</div>
               ) : (
                 workspaces.map((ws) => (
                   <Link
                     key={ws.id}
                     href={`/workspaces/${ws.id}`}
-                    className={`group flex items-center rounded-md px-2 py-2 text-sm font-medium ${
+                    className={`group flex items-center rounded-md px-2.5 py-1.5 text-[13px] transition-colors ${
                       pathname.includes(`/workspaces/${ws.id}`)
-                        ? "bg-brand-maroon/20 text-brand-crimson"
-                        : "text-gray-400 hover:bg-white/5 hover:text-white"
+                        ? "bg-white/10 text-white font-medium"
+                        : "text-zinc-400 hover:bg-white/5 hover:text-white"
                     } ${isCollapsed ? "justify-center" : ""}`}
                     title={isCollapsed ? ws.name : ""}
                   >
-                    <div className={`h-6 w-6 rounded border border-white/5 bg-white/5 flex items-center justify-center text-[10px] font-bold text-gray-500 group-hover:text-white group-hover:bg-brand-maroon/40 group-hover:border-brand-maroon/20 transition-all flex-shrink-0 ${!isCollapsed ? "mr-3" : ""}`}>
+                    <div className={`h-5 w-5 rounded border border-white/10 flex items-center justify-center text-[10px] font-medium transition-colors flex-shrink-0 ${
+                      pathname.includes(`/workspaces/${ws.id}`) ? "bg-white/10 text-white" : "bg-transparent text-zinc-500 group-hover:text-white group-hover:bg-white/5"
+                    } ${!isCollapsed ? "mr-2.5" : ""}`}>
                       {ws.name.substring(0, 2).toUpperCase()}
                     </div>
                     {!isCollapsed && <span className="truncate">{ws.name}</span>}
@@ -204,21 +199,21 @@ export function Sidebar() {
         </nav>
       </div>
 
-      <div className="flex shrink-0 border-t border-white/5 p-4">
-        <div className={`flex w-full items-center justify-between px-2 ${isCollapsed ? "flex-col gap-4" : ""}`}>
-          <div className="flex items-center">
-            <div className="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center text-white text-xs font-bold uppercase overflow-hidden shrink-0">
+      <div className="flex shrink-0 p-3">
+        <div className={`flex w-full items-center justify-between px-1 ${isCollapsed ? "flex-col gap-4" : ""}`}>
+          <div className="flex items-center gap-2.5">
+            <div className="h-7 w-7 rounded-full bg-white/10 flex items-center justify-center text-white text-[11px] font-medium shrink-0">
               {user?.email?.charAt(0) || "U"}
             </div>
             {!isCollapsed && (
-              <div className="ml-3 truncate max-w-[120px]">
-                <p className="text-sm font-medium text-white truncate">{user?.profile?.full_name || user?.email}</p>
+              <div className="truncate max-w-[120px]">
+                <p className="text-[13px] font-medium text-zinc-200 truncate">{user?.profile?.full_name || user?.email}</p>
               </div>
             )}
           </div>
           <button
             onClick={handleSignOut}
-            className="text-gray-400 hover:text-white transition-colors p-2 shrink-0"
+            className="text-zinc-500 hover:text-white transition-colors p-1 shrink-0"
             title="Sign out"
           >
             <LogOut className="h-4 w-4" />

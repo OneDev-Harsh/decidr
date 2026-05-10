@@ -141,10 +141,8 @@ export default function ProjectPage() {
 
   if (loading) {
     return (
-      <div className="flex-1 p-8 flex items-center justify-center min-h-screen">
-        <div className="animate-pulse flex flex-col items-center">
-          <div className="h-12 w-12 rounded-full border-t-2 border-brand-crimson animate-spin mb-4"></div>
-        </div>
+      <div className="flex-1 p-12 flex items-center justify-center min-h-screen bg-black">
+        <Loader2 className="h-5 w-5 animate-spin text-zinc-500" />
       </div>
     );
   }
@@ -160,69 +158,70 @@ export default function ProjectPage() {
   ];
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#050505]">
-      <div className="shrink-0 border-b border-white/5 bg-black/60 backdrop-blur-xl px-8 py-6 sticky top-0 z-40">
-        <div className="mb-4">
-          <Link href={`/workspaces/${project?.workspace_id}`} className="text-sm font-medium text-gray-400 hover:text-white flex items-center transition-colors">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to {project?.workspaces?.name}
-          </Link>
-        </div>
+    <div className="flex-1 flex flex-col h-full bg-black">
+      <div className="shrink-0 border-b border-white/10 bg-black px-8 pt-8 sticky top-0 z-40">
+        <div className="max-w-[1200px] mx-auto">
+          <div className="mb-6">
+            <Link href={`/workspaces/${project?.workspace_id}`} className="text-[13px] font-medium text-zinc-500 hover:text-white flex items-center transition-colors w-fit">
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back to {project?.workspaces?.name}
+            </Link>
+          </div>
 
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-3 mb-1">
-              <h1 className="text-2xl font-bold tracking-tight text-white">{project?.title}</h1>
-              <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-brand-maroon/20 text-brand-crimson border border-brand-maroon/20">
-                {project?.status}
-              </span>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-3 mb-1">
+                <h1 className="text-2xl font-semibold tracking-tight text-white">{project?.title}</h1>
+                <span className="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium bg-white/10 text-white capitalize">
+                  {project?.status}
+                </span>
+              </div>
+              <p className="text-[14px] text-zinc-400 max-w-2xl">
+                {project?.description || "No description provided."}
+              </p>
             </div>
-            <p className="text-gray-400 max-w-2xl text-sm">
-              {project?.description || "No description provided."}
-            </p>
+            <div className="flex gap-3">
+              <Button variant="outline" size="sm" onClick={() => setIsEditing(!isEditing)} className="border-white/10 text-white hover:bg-white/5 h-9">
+                <Edit className="mr-2 h-4 w-4" /> {isEditing ? "Cancel" : "Edit Details"}
+              </Button>
+              <Button size="sm" onClick={handleGenerateReport} className="bg-white hover:bg-zinc-200 text-black font-medium px-4 h-9 border-none transition-colors rounded-md shadow-sm">
+                <FileText className="mr-2 h-4 w-4" /> Generate Report
+              </Button>
+            </div>
           </div>
-          <div className="flex gap-4">
-            <Button variant="outline" size="sm" onClick={() => setIsEditing(!isEditing)}>
-              <Edit className="mr-2 h-4 w-4" /> {isEditing ? "Cancel" : "Edit Details"}
-            </Button>
-            <Button size="sm" onClick={handleGenerateReport} className="bg-brand-maroon hover:bg-brand-crimson text-white">
-              <FileText className="mr-2 h-4 w-4" /> Generate Report
-            </Button>
-          </div>
-        </div>
 
-        <div className="mt-8 flex space-x-1 overflow-x-auto no-scrollbar">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap ${
-                activeTab === tab.id
-                  ? "bg-[#050505] text-white border-t border-l border-r border-white/10"
-                  : "text-gray-400 hover:text-white hover:bg-white/5"
-              }`}
-            >
-              <tab.icon className={`mr-2 h-4 w-4 ${activeTab === tab.id ? (tab.id === 'blindspots' ? "text-amber-500" : "text-brand-crimson") : ""}`} />
-              {tab.name}
-              
-              {/* Dynamic Badges */}
-              {tab.id === 'evidence' && project?._evidenceCount !== undefined && (
-                <span className="ml-2 text-[9px] font-bold bg-white/5 px-1.5 py-0.5 rounded text-gray-500">{project._evidenceCount}</span>
-              )}
-              {tab.id === 'blindspots' && project?.last_blindspots?.length > 0 && (
-                <span className="ml-2 text-[9px] font-bold bg-amber-500/10 px-1.5 py-0.5 rounded text-amber-500 border border-amber-500/20">
-                  {project.last_blindspots.length}
-                </span>
-              )}
-              {tab.id === 'scenarios' && project?.last_scenarios?.length > 0 && (
-                <span className="ml-2 text-[9px] font-bold bg-brand-crimson/10 px-1.5 py-0.5 rounded text-brand-crimson border border-brand-crimson/20">
-                  {project.last_scenarios.length}
-                </span>
-              )}
-              {tab.id === 'recommendation' && project?.status === 'DECIDED' && (
-                <CheckCircle2 className="ml-2 h-3 w-3 text-emerald-500" />
-              )}
-            </button>
-          ))}
+          <div className="mt-8 flex space-x-6 overflow-x-auto no-scrollbar relative top-[1px]">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center pb-3 text-[14px] font-medium transition-colors whitespace-nowrap border-b-2 ${
+                  activeTab === tab.id
+                    ? "text-white border-white"
+                    : "text-zinc-500 hover:text-zinc-300 border-transparent"
+                }`}
+              >
+                <tab.icon className={`mr-2 h-4 w-4 ${activeTab === tab.id ? "text-white" : "text-zinc-500"}`} /> {tab.name}
+                {tab.id === 'evidence' && project?._evidenceCount > 0 && (
+                  <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] ${activeTab === tab.id ? "bg-white/10 text-white" : "bg-white/5 text-zinc-500"}`}>
+                    {project._evidenceCount}
+                  </span>
+                )}
+                {tab.id === 'blindspots' && project?.last_blindspots?.length > 0 && (
+                  <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] ${activeTab === tab.id ? "bg-red-500/20 text-red-400 border border-red-500/20" : "bg-white/5 text-zinc-500"}`}>
+                    {project.last_blindspots.length}
+                  </span>
+                )}
+                {tab.id === 'scenarios' && project?.last_scenarios?.length > 0 && (
+                  <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] ${activeTab === tab.id ? "bg-white/10 text-white" : "bg-white/5 text-zinc-500"}`}>
+                    {project.last_scenarios.length}
+                  </span>
+                )}
+                {tab.id === 'recommendation' && project?.status === 'DECIDED' && (
+                  <CheckCircle2 className="ml-2 h-3 w-3 text-emerald-500" />
+                )}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -241,90 +240,97 @@ export default function ProjectPage() {
             transition={{ duration: 0.2 }}
           >
             {isEditing ? (
-              <div className="max-w-4xl space-y-10">
+              <div className="max-w-3xl space-y-10 pb-24">
                 {/* Bulk Analysis Section */}
-                <Card className="bg-brand-maroon/5 border-brand-maroon/20 overflow-hidden shadow-xl shadow-brand-maroon/5">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-crimson/40 to-transparent" />
-                  <CardHeader className="pb-3">
+                <div className="bg-[#0a0a0a] border border-white/10 rounded-xl overflow-hidden relative">
+                  <div className="p-6 border-b border-white/[0.05]">
                     <div className="flex items-center gap-2 mb-1">
-                      <Sparkles className="h-4 w-4 text-brand-crimson" />
-                      <CardTitle className="text-sm font-bold uppercase tracking-[0.2em] text-white">AI Strategic Intake</CardTitle>
+                      <Sparkles className="h-4 w-4 text-zinc-400" />
+                      <h3 className="text-[15px] font-medium text-white">AI Strategic Intake</h3>
                     </div>
-                    <CardDescription className="text-gray-400 text-xs">
+                    <p className="text-[13px] text-zinc-500">
                       Paste a project brief, email, or meeting notes. Our AI will automatically structure the project context.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
+                    </p>
+                  </div>
+                  <div className="p-6 space-y-4">
                     <textarea 
                       value={bulkText}
                       onChange={(e) => setBulkText(e.target.value)}
                       placeholder="Paste unstructured project details here..."
-                      className="w-full min-h-[120px] bg-black/40 border border-white/5 rounded-lg px-4 py-3 text-sm text-gray-300 placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-brand-crimson/30 transition-all resize-none"
+                      className="w-full min-h-[120px] bg-black border border-white/10 rounded-md px-4 py-3 text-[14px] text-white placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all resize-none"
                     />
                     <Button 
                       onClick={handleBulkAnalyze} 
                       disabled={isAnalyzingBulk || !bulkText.trim()}
-                      className="w-full bg-brand-maroon/20 hover:bg-brand-maroon/40 text-brand-crimson border border-brand-maroon/30 h-11 text-xs font-bold uppercase tracking-widest transition-all group"
+                      className="w-full bg-white/5 hover:bg-white/10 text-white border border-white/10 h-10 text-[13px] font-medium transition-all group"
                     >
-                      {isAnalyzingBulk ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand2 className="mr-2 h-4 w-4 group-hover:rotate-12 transition-transform" />}
+                      {isAnalyzingBulk ? <Loader2 className="mr-2 h-4 w-4 animate-spin text-zinc-400" /> : <Wand2 className="mr-2 h-4 w-4 text-zinc-400 group-hover:rotate-12 transition-transform" />}
                       {isAnalyzingBulk ? "Analyzing Decision Vectors..." : "Synthesize & Auto-Fill Fields"}
                     </Button>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
 
                 <form ref={formRef} onSubmit={handleSaveDetails} className="space-y-8">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="h-px flex-1 bg-white/5" />
-                    <span className="text-[10px] font-bold text-gray-600 uppercase tracking-[0.3em]">Manual Refinement</span>
+                    <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-widest">Manual Refinement</span>
                     <div className="h-px flex-1 bg-white/5" />
                   </div>
-                <div className="grid gap-6 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-400">Project Title</label>
-                    <input name="title" defaultValue={project.title} className="w-full bg-white/5 border border-white/10 rounded-md px-3 py-2 text-white" required />
+                  
+                  <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-6 space-y-6">
+                    <div className="grid gap-6 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <label className="text-[13px] font-medium text-zinc-300">Project Title</label>
+                        <input name="title" defaultValue={project.title} className="w-full bg-black border border-white/10 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-white/20 text-[14px] h-10" required />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[13px] font-medium text-zinc-300">Description</label>
+                        <input name="description" defaultValue={project.description} className="w-full bg-black border border-white/10 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-white/20 text-[14px] h-10" />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[13px] font-medium text-zinc-300">Problem Statement</label>
+                      <textarea name="problem_statement" defaultValue={project.problem_statement} className="w-full min-h-[100px] bg-black border border-white/10 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-white/20 text-[14px]" placeholder="What is the core question to answer?" />
+                    </div>
+                    <div className="grid gap-6 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <label className="text-[13px] font-medium text-zinc-300">Status</label>
+                        <select name="status" defaultValue={project.status} className="w-full bg-black border border-white/10 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-white/20 text-[14px] h-10">
+                          <option value="ACTIVE">ACTIVE</option>
+                          <option value="ANALYZING">ANALYZING</option>
+                          <option value="DECIDED">DECIDED</option>
+                          <option value="ARCHIVED">ARCHIVED</option>
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[13px] font-medium text-zinc-300">Priority</label>
+                        <select name="priority" defaultValue={project.priority} className="w-full bg-black border border-white/10 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-white/20 text-[14px] h-10">
+                          <option value="low">Low</option>
+                          <option value="medium">Medium</option>
+                          <option value="high">High</option>
+                          <option value="critical">Critical</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[13px] font-medium text-zinc-300">Goals & Constraints</label>
+                      <textarea name="goals" defaultValue={project.goals} className="w-full min-h-[100px] bg-black border border-white/10 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-white/20 text-[14px]" placeholder="What must be achieved and avoided?" />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-300">Description</label>
-                    <input name="description" defaultValue={project.description} className="w-full bg-white/5 border border-white/10 rounded-md px-3 py-2 text-white" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-400">Problem Statement</label>
-                  <textarea name="problem_statement" defaultValue={project.problem_statement} className="w-full min-h-[100px] bg-white/5 border border-white/10 rounded-md px-3 py-2 text-white" placeholder="What is the core question to answer?" />
-                </div>
-                <div className="grid gap-6 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-400">Status</label>
-                    <select name="status" defaultValue={project.status} className="w-full bg-white/5 border border-white/10 rounded-md px-3 py-2 text-white appearance-none cursor-pointer hover:bg-white/10 transition-colors">
-                      <option value="ACTIVE" className="bg-[#111]">ACTIVE</option>
-                      <option value="ANALYZING" className="bg-[#111]">ANALYZING</option>
-                      <option value="DECIDED" className="bg-[#111]">DECIDED</option>
-                      <option value="ARCHIVED" className="bg-[#111]">ARCHIVED</option>
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-400">Priority</label>
-                    <select name="priority" defaultValue={project.priority} className="w-full bg-white/5 border border-white/10 rounded-md px-3 py-2 text-white appearance-none cursor-pointer hover:bg-white/10 transition-colors">
-                      <option value="low" className="bg-[#111]">Low</option>
-                      <option value="medium" className="bg-[#111]">Medium</option>
-                      <option value="high" className="bg-[#111]">High</option>
-                      <option value="critical" className="bg-[#111]">Critical</option>
-                    </select>
-                  </div>
-                </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-400">Goals & Constraints</label>
-                  <textarea name="goals" defaultValue={project.goals} className="w-full min-h-[100px] bg-white/5 border border-white/10 rounded-md px-3 py-2 text-white" placeholder="What must be achieved and avoided?" />
-                </div>
-                <div className="pt-6 flex items-center justify-between border-t border-white/5">
-                  <p className="text-[10px] text-gray-500 italic max-w-md">
-                    Changes will only be persisted to the database once you click "Commit Strategic Updates".
-                  </p>
-                  <Button type="submit" disabled={saving} className="bg-brand-crimson hover:bg-brand-crimson/80 text-white px-10 h-12 text-xs font-bold uppercase tracking-widest shadow-lg shadow-brand-crimson/20">
-                    {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Commit Strategic Updates
-                  </Button>
-                </div>
+                  <div className="pt-2 flex items-center justify-between">
+                    <p className="text-[12px] text-zinc-500">
+                      Changes are not saved until committed.
+                    </p>
+                    <div className="flex gap-3">
+                      <Button type="button" variant="ghost" onClick={() => setIsEditing(false)} className="text-zinc-400 hover:text-white hover:bg-white/5 h-10 px-4">
+                        Cancel
+                      </Button>
+                      <Button type="submit" disabled={saving} className="bg-white hover:bg-zinc-200 text-black px-6 h-10 text-[14px] font-medium rounded-md shadow-sm transition-colors">
+                        {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin text-zinc-500" />} Save Changes
+                      </Button>
+                    </div>
+                  </div>
                 </form>
               </div>
             ) : (
