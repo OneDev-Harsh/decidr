@@ -51,7 +51,7 @@ Ensure the output is valid JSON matching this structure:
 }
   `;
 
-  const modelToUse = 'anthropic/claude-sonnet-4.5';
+  const modelToUse = 'openai/gpt-4o-mini';
   
   const completion = await withTrace(
     { projectId: project.id, agentRole: 'scenario_agent' },

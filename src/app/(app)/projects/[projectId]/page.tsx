@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { insforge } from "@/lib/insforge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Edit, FileText, Database, GitMerge, CheckCircle, CheckCircle2, Target, Loader2, EyeOff, MessageSquare, Share2, Clock, Maximize2 } from "lucide-react";
+import { ArrowLeft, Edit, FileText, Database, GitMerge, CheckCircle, CheckCircle2, Target, Loader2, EyeOff, MessageSquare, Share2, Clock, Maximize2, Sparkles, Wand2 } from "lucide-react";
 import { EvidenceManager } from "@/components/app/EvidenceManager";
 import { ScenarioMatrix } from "@/components/app/ScenarioMatrix";
 import { RecommendationView } from "@/components/app/RecommendationView";
@@ -29,6 +29,11 @@ export default function ProjectPage() {
   const [saving, setSaving] = useState(false);
   const [contradictions, setContradictions] = useState<any[]>([]);
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+  const [bulkText, setBulkText] = useState("");
+  const [isAnalyzingBulk, setIsAnalyzingBulk] = useState(false);
+  
+  // Form refs for auto-fill
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     async function loadProject() {
@@ -68,6 +73,41 @@ export default function ProjectPage() {
     }
   };
 
+  async function handleBulkAnalyze() {
+    if (!bulkText.trim()) return;
+    setIsAnalyzingBulk(true);
+    try {
+      const authHeader = insforge.getHttpClient().getHeaders()['Authorization'];
+      const response = await fetch('/api/ai/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': authHeader || '' },
+        body: JSON.stringify({ 
+          project, 
+          action: 'bulk_extract',
+          bulkText 
+        })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Extraction failed');
+
+      // Update project state locally so fields reflect changes
+      setProject({
+        ...project,
+        title: data.title || project.title,
+        description: data.description || project.description,
+        problem_statement: data.problem_statement || project.problem_statement,
+        goals: data.goals || project.goals,
+        status: data.status || project.status,
+        priority: data.priority || project.priority,
+      });
+      setBulkText(""); // Clear after success
+    } catch (err: any) {
+      alert("Extraction error: " + err.message);
+    } finally {
+      setIsAnalyzingBulk(false);
+    }
+  }
+
   async function handleSaveDetails(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSaving(true);
@@ -77,6 +117,8 @@ export default function ProjectPage() {
       description: formData.get("description") as string,
       problem_statement: formData.get("problem_statement") as string,
       goals: formData.get("goals") as string,
+      status: formData.get("status") as string,
+      priority: formData.get("priority") as string,
     };
 
     const { error } = await insforge.database
@@ -199,7 +241,43 @@ export default function ProjectPage() {
             transition={{ duration: 0.2 }}
           >
             {isEditing ? (
-              <form onSubmit={handleSaveDetails} className="max-w-4xl space-y-6">
+              <div className="max-w-4xl space-y-10">
+                {/* Bulk Analysis Section */}
+                <Card className="bg-brand-maroon/5 border-brand-maroon/20 overflow-hidden shadow-xl shadow-brand-maroon/5">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-crimson/40 to-transparent" />
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Sparkles className="h-4 w-4 text-brand-crimson" />
+                      <CardTitle className="text-sm font-bold uppercase tracking-[0.2em] text-white">AI Strategic Intake</CardTitle>
+                    </div>
+                    <CardDescription className="text-gray-400 text-xs">
+                      Paste a project brief, email, or meeting notes. Our AI will automatically structure the project context.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <textarea 
+                      value={bulkText}
+                      onChange={(e) => setBulkText(e.target.value)}
+                      placeholder="Paste unstructured project details here..."
+                      className="w-full min-h-[120px] bg-black/40 border border-white/5 rounded-lg px-4 py-3 text-sm text-gray-300 placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-brand-crimson/30 transition-all resize-none"
+                    />
+                    <Button 
+                      onClick={handleBulkAnalyze} 
+                      disabled={isAnalyzingBulk || !bulkText.trim()}
+                      className="w-full bg-brand-maroon/20 hover:bg-brand-maroon/40 text-brand-crimson border border-brand-maroon/30 h-11 text-xs font-bold uppercase tracking-widest transition-all group"
+                    >
+                      {isAnalyzingBulk ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand2 className="mr-2 h-4 w-4 group-hover:rotate-12 transition-transform" />}
+                      {isAnalyzingBulk ? "Analyzing Decision Vectors..." : "Synthesize & Auto-Fill Fields"}
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <form ref={formRef} onSubmit={handleSaveDetails} className="space-y-8">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="h-px flex-1 bg-white/5" />
+                    <span className="text-[10px] font-bold text-gray-600 uppercase tracking-[0.3em]">Manual Refinement</span>
+                    <div className="h-px flex-1 bg-white/5" />
+                  </div>
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-400">Project Title</label>
@@ -214,14 +292,41 @@ export default function ProjectPage() {
                   <label className="text-sm font-medium text-gray-400">Problem Statement</label>
                   <textarea name="problem_statement" defaultValue={project.problem_statement} className="w-full min-h-[100px] bg-white/5 border border-white/10 rounded-md px-3 py-2 text-white" placeholder="What is the core question to answer?" />
                 </div>
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-400">Status</label>
+                    <select name="status" defaultValue={project.status} className="w-full bg-white/5 border border-white/10 rounded-md px-3 py-2 text-white appearance-none cursor-pointer hover:bg-white/10 transition-colors">
+                      <option value="ACTIVE" className="bg-[#111]">ACTIVE</option>
+                      <option value="ANALYZING" className="bg-[#111]">ANALYZING</option>
+                      <option value="DECIDED" className="bg-[#111]">DECIDED</option>
+                      <option value="ARCHIVED" className="bg-[#111]">ARCHIVED</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-400">Priority</label>
+                    <select name="priority" defaultValue={project.priority} className="w-full bg-white/5 border border-white/10 rounded-md px-3 py-2 text-white appearance-none cursor-pointer hover:bg-white/10 transition-colors">
+                      <option value="low" className="bg-[#111]">Low</option>
+                      <option value="medium" className="bg-[#111]">Medium</option>
+                      <option value="high" className="bg-[#111]">High</option>
+                      <option value="critical" className="bg-[#111]">Critical</option>
+                    </select>
+                  </div>
+                </div>
+
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-400">Goals & Constraints</label>
                   <textarea name="goals" defaultValue={project.goals} className="w-full min-h-[100px] bg-white/5 border border-white/10 rounded-md px-3 py-2 text-white" placeholder="What must be achieved and avoided?" />
                 </div>
-                <Button type="submit" disabled={saving} className="bg-brand-crimson text-white">
-                  {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Save Project Details
-                </Button>
-              </form>
+                <div className="pt-6 flex items-center justify-between border-t border-white/5">
+                  <p className="text-[10px] text-gray-500 italic max-w-md">
+                    Changes will only be persisted to the database once you click "Commit Strategic Updates".
+                  </p>
+                  <Button type="submit" disabled={saving} className="bg-brand-crimson hover:bg-brand-crimson/80 text-white px-10 h-12 text-xs font-bold uppercase tracking-widest shadow-lg shadow-brand-crimson/20">
+                    {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Commit Strategic Updates
+                  </Button>
+                </div>
+                </form>
+              </div>
             ) : (
               <>
                 {activeTab === "context" && (

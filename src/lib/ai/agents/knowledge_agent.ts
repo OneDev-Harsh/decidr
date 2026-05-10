@@ -35,7 +35,7 @@ ${evidenceText}
 Extract the knowledge graph.
 `;
 
-  const modelToUse = 'anthropic/claude-sonnet-4.5';
+  const modelToUse = 'openai/gpt-4o-mini';
 
   const completion = await withTrace(
     { projectId: project.id, agentRole: 'knowledge_agent' },

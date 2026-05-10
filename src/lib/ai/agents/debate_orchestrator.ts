@@ -3,7 +3,7 @@ import { withTrace } from "../core/tracer";
 
 export async function runDebate(project: any, evidenceText: string, client?: any) {
   const insClient = client || defaultInsforge;
-  const modelToUse = 'anthropic/claude-sonnet-4.5';
+  const modelToUse = 'openai/gpt-4o-mini';
   
   // Create Debate Session in DB
   const { data: session } = await insClient.database

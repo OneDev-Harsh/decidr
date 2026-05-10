@@ -5,10 +5,11 @@ import { generateBlindspots } from '@/lib/ai/agents/blindspot_agent';
 import { generateRecommendation } from '@/lib/ai/agents/recommendation_agent';
 import { detectContradictions } from '@/lib/ai/agents/contradiction_agent';
 import { extractKnowledgeGraph } from '@/lib/ai/agents/knowledge_agent';
+import { bulkExtractProjectDetails } from '@/lib/ai/agents/onboarding_agent';
 import { createClient } from '@insforge/sdk';
 import type { AnalysisAction } from '@/lib/types';
 
-const VALID_ACTIONS: AnalysisAction[] = ['scenarios', 'recommendation', 'blindspots', 'knowledge_map'];
+const VALID_ACTIONS: AnalysisAction[] = ['scenarios', 'recommendation', 'blindspots', 'knowledge_map', 'bulk_extract'];
 
 /**
  * Attempts to parse JSON from AI output using multiple strategies.
@@ -155,6 +156,9 @@ export async function POST(req: Request) {
         break;
       case 'knowledge_map':
         aiContent = await extractKnowledgeGraph(project, evidenceText, insforge);
+        break;
+      case 'bulk_extract':
+        aiContent = await bulkExtractProjectDetails(project, body.bulkText || evidenceText, insforge);
         break;
     }
 

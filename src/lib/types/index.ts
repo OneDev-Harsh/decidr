@@ -226,7 +226,7 @@ export interface ProjectListComponentProps {
 
 // ─── API Types ─────────────────────────────────────────────────────
 
-export type AnalysisAction = 'scenarios' | 'recommendation' | 'blindspots' | 'knowledge_map';
+export type AnalysisAction = 'scenarios' | 'recommendation' | 'blindspots' | 'knowledge_map' | 'bulk_extract';
 
 export interface AnalysisRequest {
   project: Project;

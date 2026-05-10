@@ -475,11 +475,11 @@ export const KnowledgeMap = memo(function KnowledgeMap({ project, onAnalysisComp
                   </div>
                 </div>
 
-                <div className="mt-auto pt-8">
+                {/* <div className="mt-auto pt-8">
                   <Button className="w-full bg-white/5 hover:bg-white/10 text-white border-white/10 text-[10px] font-bold uppercase tracking-[0.2em] h-11 transition-all">
                     Trace Dependency Stream
                   </Button>
-                </div>
+                </div> */}
               </motion.div>
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center text-center">
