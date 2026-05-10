@@ -70,7 +70,7 @@ export function Sidebar() {
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Search", href: "#", icon: Search, shortcut: "⌘K" },
+    //{ name: "Search", href: "#", icon: Search, shortcut: "⌘K" },
     { name: "Workspaces", href: "/workspaces", icon: FolderKanban },
     { name: "Settings", href: "/settings", icon: Settings },
   ];

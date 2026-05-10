@@ -36,7 +36,7 @@ export function EvidenceManager({ projectId }: { projectId: string }) {
     if (!confirm("Are you sure you want to delete this evidence?")) return;
     
     if (type === 'file' && filePath) {
-      await insforge.storage.from('decision-assets').remove(filePath);
+      await insforge.storage.from('public-evidence').remove(filePath);
     }
     
     await insforge.database.from('evidence').delete().eq('id', id);
@@ -108,7 +108,7 @@ export function EvidenceManager({ projectId }: { projectId: string }) {
 
     // 1. Upload to storage
     const { data: uploadData, error: uploadError } = await insforge.storage
-      .from('decision-assets')
+      .from('public-evidence')
       .uploadAuto(file);
 
     if (uploadError || !uploadData) {
