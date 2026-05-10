@@ -13,7 +13,8 @@ import {
   Plus,
   Loader2,
   ChevronLeft,
-  Menu
+  Menu,
+  Search
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -28,8 +29,8 @@ export function Sidebar() {
   useEffect(() => {
     async function loadData() {
       // Fetch user
-      const { data: userData } = await insforge.auth.getCurrentUser();
-      if (!userData?.user) {
+      const { data: userData, error: userError } = await insforge.auth.getCurrentUser();
+      if (userError || !userData?.user) {
         router.push("/login");
         return;
       }
@@ -69,6 +70,7 @@ export function Sidebar() {
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Search", href: "#", icon: Search, shortcut: "⌘K" },
     { name: "Workspaces", href: "/workspaces", icon: FolderKanban },
     { name: "Settings", href: "/settings", icon: Settings },
   ];
@@ -143,7 +145,16 @@ export function Sidebar() {
                   } ${!isCollapsed ? "mr-3" : ""}`}
                   aria-hidden="true"
                 />
-                {!isCollapsed && <span>{item.name}</span>}
+                {!isCollapsed && (
+                  <div className="flex-1 flex items-center justify-between">
+                    <span>{item.name}</span>
+                    {item.shortcut && (
+                      <span className="text-[10px] text-gray-700 font-mono group-hover:text-gray-500 transition-colors">
+                        {item.shortcut}
+                      </span>
+                    )}
+                  </div>
+                )}
               </Link>
             );
           })}
@@ -181,7 +192,9 @@ export function Sidebar() {
                     } ${isCollapsed ? "justify-center" : ""}`}
                     title={isCollapsed ? ws.name : ""}
                   >
-                    <div className={`h-2 w-2 rounded-full bg-brand-maroon flex-shrink-0 ${!isCollapsed ? "mr-3" : ""}`} />
+                    <div className={`h-6 w-6 rounded border border-white/5 bg-white/5 flex items-center justify-center text-[10px] font-bold text-gray-500 group-hover:text-white group-hover:bg-brand-maroon/40 group-hover:border-brand-maroon/20 transition-all flex-shrink-0 ${!isCollapsed ? "mr-3" : ""}`}>
+                      {ws.name.substring(0, 2).toUpperCase()}
+                    </div>
                     {!isCollapsed && <span className="truncate">{ws.name}</span>}
                   </Link>
                 ))

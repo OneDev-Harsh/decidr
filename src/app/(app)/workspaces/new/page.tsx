@@ -31,7 +31,7 @@ export default function NewWorkspacePage() {
     // Ensure profile exists (fix for foreign key constraint)
     await insforge.database.from('profiles').upsert([{
       id: userData.user.id,
-      full_name: userData.user.name || userData.user.email?.split('@')[0] || 'Unknown',
+      full_name: userData.user.profile?.name || userData.user.email?.split('@')[0] || 'Unknown',
       email: userData.user.email
     }]);
 

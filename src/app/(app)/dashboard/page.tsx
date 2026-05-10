@@ -9,7 +9,11 @@ import {
   Plus, 
   ChevronRight,
   Clock,
-  ArrowUpRight
+  ArrowUpRight,
+  Activity,
+  ShieldCheck,
+  Zap,
+  BarChart3
 } from "lucide-react";
 
 export default function DashboardPage() {
@@ -85,6 +89,26 @@ export default function DashboardPage() {
         </Button>
       </header>
 
+      {/* Stats Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        {[
+          { label: 'Decision Streams', value: recentProjects.length, icon: Zap, color: 'text-brand-crimson' },
+          { label: 'Critical Priority', value: recentProjects.filter(p => p.priority === 'high').length, icon: ShieldCheck, color: 'text-amber-500' },
+          { label: 'System Events (24h)', value: activities.length, icon: Activity, color: 'text-blue-500' },
+          { label: 'System Health', value: 'Nominal', icon: BarChart3, color: 'text-emerald-500' },
+        ].map((stat, i) => (
+          <Card key={i} className="bg-white/5 border-white/10 glass-card">
+            <CardContent className="p-6 flex items-center justify-between">
+              <div>
+                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">{stat.label}</p>
+                <p className="text-2xl font-black text-white">{stat.value}</p>
+              </div>
+              <stat.icon className={`h-8 w-8 ${stat.color} opacity-20`} />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
       {/* Primary Content Grid */}
       <div className="grid gap-16 lg:grid-cols-12">
         
@@ -127,7 +151,14 @@ export default function DashboardPage() {
                         }`} />
                         <span className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">{project.priority}</span>
                       </div>
-                      <span className="text-[10px] text-gray-700 font-medium">{new Date(project.updated_at).toLocaleDateString()}</span>
+                      <div className="flex items-center gap-3">
+                        {project.last_recommendation && (
+                          <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest flex items-center gap-1">
+                            <ShieldCheck className="h-3 w-3" /> Resolved
+                          </span>
+                        )}
+                        <span className="text-[10px] text-gray-700 font-medium">{new Date(project.updated_at).toLocaleDateString()}</span>
+                      </div>
                     </div>
                   </div>
                 </Link>

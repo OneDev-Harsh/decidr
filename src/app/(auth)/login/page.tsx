@@ -36,7 +36,13 @@ export default function SignInPage() {
     }
 
     if (data?.accessToken) {
-      router.push("/dashboard");
+      // Manually set the auth cookie for middleware as a fallback
+      document.cookie = `insforge-auth-token=${data.accessToken}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+      
+      // Use window.location.href for auth redirects to ensure middleware re-evaluates with new cookies
+      const params = new URLSearchParams(window.location.search);
+      const redirectTo = params.get("redirect") || "/dashboard";
+      window.location.href = redirectTo;
     }
   }
 

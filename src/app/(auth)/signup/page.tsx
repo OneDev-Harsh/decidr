@@ -39,8 +39,10 @@ export default function SignUpPage() {
 
     if (data?.requireEmailVerification) {
       router.push("/verify-email?email=" + encodeURIComponent(email));
-    } else {
-      router.push("/dashboard");
+    } else if (data?.accessToken) {
+      // Manually set the auth cookie for middleware as a fallback
+      document.cookie = `insforge-auth-token=${data.accessToken}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+      window.location.href = "/dashboard";
     }
   }
 
