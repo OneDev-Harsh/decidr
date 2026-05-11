@@ -5,7 +5,8 @@ import { insforge } from "@/lib/insforge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, Link as LinkIcon, Upload, Loader2, Trash2 } from "lucide-react";
+import { FileText, Link as LinkIcon, Upload, Loader2, Trash2, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function EvidenceManager({ projectId }: { projectId: string }) {
   const [evidenceList, setEvidenceList] = useState<any[]>([]);
@@ -40,6 +41,14 @@ export function EvidenceManager({ projectId }: { projectId: string }) {
     }
     
     await insforge.database.from('evidence').delete().eq('id', id);
+    
+    // Log activity
+    await insforge.database.from('project_activity').insert({
+      project_id: projectId,
+      action: 'evidence.removed',
+      details: `Removed ${type} evidence.`,
+    });
+
     await loadEvidence();
   }
 
@@ -61,6 +70,12 @@ export function EvidenceManager({ projectId }: { projectId: string }) {
 
     if (error) setError(error.message);
     else {
+      // Log activity
+      await insforge.database.from('project_activity').insert({
+        project_id: projectId,
+        action: 'evidence.added',
+        details: `Note added: ${title}`,
+      });
       setAddingType('none');
       await loadEvidence();
     }
@@ -85,6 +100,12 @@ export function EvidenceManager({ projectId }: { projectId: string }) {
 
     if (error) setError(error.message);
     else {
+      // Log activity
+      await insforge.database.from('project_activity').insert({
+        project_id: projectId,
+        action: 'evidence.added',
+        details: `Link added: ${title}`,
+      });
       setAddingType('none');
       await loadEvidence();
     }
@@ -128,11 +149,19 @@ export function EvidenceManager({ projectId }: { projectId: string }) {
 
     if (dbError) setError(dbError.message);
     else {
+      // Log activity
+      await insforge.database.from('project_activity').insert({
+        project_id: projectId,
+        action: 'evidence.added',
+        details: `File uploaded: ${title}`,
+      });
       setAddingType('none');
       await loadEvidence();
     }
     setIsSubmitting(false);
   }
+
+  const [selectedEvidence, setSelectedEvidence] = useState<any | null>(null);
 
   return (
     <div className="space-y-6">
@@ -240,7 +269,11 @@ export function EvidenceManager({ projectId }: { projectId: string }) {
                   <Button variant="ghost" size="sm" asChild className="text-[12px] text-zinc-400 hover:text-white hover:bg-white/5 h-8">
                     <a href={evidence.content} target="_blank" rel="noopener noreferrer">View</a>
                   </Button>
-                ) : null}
+                ) : (
+                  <Button variant="ghost" size="sm" onClick={() => setSelectedEvidence(evidence)} className="text-[12px] text-zinc-400 hover:text-white hover:bg-white/5 h-8">
+                    View
+                  </Button>
+                )}
                 <Button variant="ghost" size="sm" className="text-zinc-500 hover:text-red-400 hover:bg-red-400/10 h-8" onClick={() => handleDelete(evidence.id, evidence.type, evidence.file_path)}>
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -249,6 +282,41 @@ export function EvidenceManager({ projectId }: { projectId: string }) {
           ))}
         </div>
       )}
+
+      {/* Evidence Viewer Modal */}
+      <AnimatePresence>
+        {selectedEvidence && (
+          <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[100] flex items-center justify-center p-6" onClick={() => setSelectedEvidence(null)}>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[#0a0a0a] border border-white/10 rounded-xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
+            >
+              <div className="p-6 border-b border-white/[0.05] flex items-center justify-between">
+                <div>
+                  <h3 className="text-[16px] font-medium text-white">{selectedEvidence.title}</h3>
+                  <p className="text-[11px] text-zinc-500 capitalize">{selectedEvidence.type} • {new Date(selectedEvidence.created_at).toLocaleDateString()}</p>
+                </div>
+                <button onClick={() => setSelectedEvidence(null)} className="text-zinc-500 hover:text-white transition-colors">
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="p-8 overflow-y-auto custom-scrollbar">
+                <div className="text-[14px] text-zinc-300 leading-relaxed whitespace-pre-wrap font-light">
+                  {selectedEvidence.content}
+                </div>
+              </div>
+              <div className="p-4 border-t border-white/[0.05] flex justify-end">
+                <Button variant="ghost" onClick={() => setSelectedEvidence(null)} className="text-zinc-500 hover:text-white h-9">
+                  Close
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

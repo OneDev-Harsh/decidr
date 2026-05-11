@@ -45,6 +45,13 @@ export default function NewProjectPage() {
       return;
     }
 
+    // Log activity
+    await insforge.database.from('project_activity').insert({
+      project_id: projectData.id,
+      action: 'project.created',
+      details: `Project "${title}" initialized in workspace.`,
+    });
+
     router.push(`/projects/${projectData.id}`);
   }
 

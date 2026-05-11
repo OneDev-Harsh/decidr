@@ -6,7 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { insforge } from "@/lib/insforge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Briefcase, Settings, ArrowLeft, Loader2 } from "lucide-react";
+import { Plus, Briefcase, Settings, ArrowLeft, Loader2, Trash2 } from "lucide-react";
 
 export default function WorkspacePage() {
   const params = useParams();
@@ -49,6 +49,24 @@ export default function WorkspacePage() {
       loadWorkspace();
     }
   }, [workspaceId, router]);
+
+  async function handleDeleteProject(e: React.MouseEvent, id: string, title: string) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!confirm(`Are you sure you want to delete project "${title}"? This action cannot be undone.`)) return;
+
+    const { error } = await insforge.database
+      .from('projects')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      alert("Failed to delete project: " + error.message);
+    } else {
+      setProjects(prev => prev.filter(p => p.id !== id));
+    }
+  }
 
   if (loading) {
     return (
@@ -104,9 +122,16 @@ export default function WorkspacePage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => (
             <Link key={project.id} href={`/projects/${project.id}`}>
-              <div className="bg-[#0a0a0a] border border-white/10 p-5 rounded-lg hover:border-white/20 transition-all group h-full flex flex-col justify-between">
+              <div className="bg-[#0a0a0a] border border-white/10 p-5 rounded-lg hover:border-white/20 transition-all group h-full flex flex-col justify-between relative">
+                <button
+                  onClick={(e) => handleDeleteProject(e, project.id, project.title)}
+                  className="absolute top-4 right-4 p-2 text-zinc-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all rounded-md hover:bg-red-400/10 z-10"
+                  title="Delete Project"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
                 <div>
-                  <h3 className="text-[15px] font-medium text-white mb-2 leading-snug">{project.title}</h3>
+                  <h3 className="text-[15px] font-medium text-white mb-2 leading-snug pr-8">{project.title}</h3>
                   <p className="text-[13px] text-zinc-400 line-clamp-2 leading-relaxed mb-4">
                     {project.description || "No description provided."}
                   </p>

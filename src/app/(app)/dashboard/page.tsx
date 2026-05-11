@@ -173,15 +173,18 @@ export default function DashboardPage() {
                   <div key={activity.id} className="relative pl-6 group">
                     <div className="absolute left-[3px] top-[7px] h-1.5 w-1.5 rounded-full bg-zinc-600 group-hover:bg-brand-crimson transition-colors" />
                     <div>
-                      <p className="text-[13px] text-zinc-400 leading-relaxed">
-                        <span className="text-zinc-200 font-medium">system.{activity.action}</span>
+                      <p className="text-[13px] text-zinc-300 leading-relaxed">
+                        <span className="text-zinc-500 font-mono text-[11px] mr-2">system.{activity.action}</span>
+                        {activity.details || "Processing systemic event..."}
+                      </p>
+                      <div className="flex items-center gap-2 mt-1">
                         {activity.projects?.title && (
-                          <span> @ {activity.projects.title}</span>
+                          <span className="text-[11px] text-zinc-500">@ {activity.projects.title}</span>
                         )}
-                      </p>
-                      <p className="text-[11px] text-zinc-500 mt-1 font-mono">
-                        {new Date(activity.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
-                      </p>
+                        <span className="text-[11px] text-zinc-600 font-mono">
+                          {new Date(activity.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 ))}
