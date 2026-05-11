@@ -136,70 +136,76 @@ export function EvidenceManager({ projectId }: { projectId: string }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h3 className="text-lg font-medium text-white">Project Evidence</h3>
-          <p className="text-sm text-gray-400">Add documents, links, and notes to inform the AI.</p>
+          <h3 className="text-[16px] font-medium text-white">Project Evidence</h3>
+          <p className="text-[13px] text-zinc-500">Add documents, links, and notes to inform the analytical engine.</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => setAddingType('text')}>
-            <FileText className="mr-2 h-4 w-4" /> Note
+          <Button variant="outline" size="sm" onClick={() => setAddingType('text')} className="border-white/10 text-white hover:bg-white/5 h-9">
+            <FileText className="mr-2 h-4 w-4 text-zinc-400" /> Note
           </Button>
-          <Button variant="outline" size="sm" onClick={() => setAddingType('link')}>
-            <LinkIcon className="mr-2 h-4 w-4" /> Link
+          <Button variant="outline" size="sm" onClick={() => setAddingType('link')} className="border-white/10 text-white hover:bg-white/5 h-9">
+            <LinkIcon className="mr-2 h-4 w-4 text-zinc-400" /> Link
           </Button>
-          <Button size="sm" onClick={() => setAddingType('file')} className="bg-brand-maroon hover:bg-brand-crimson">
+          <Button size="sm" onClick={() => setAddingType('file')} className="bg-white hover:bg-zinc-200 text-black font-medium px-4 h-9 border-none transition-colors rounded-md shadow-sm">
             <Upload className="mr-2 h-4 w-4" /> Upload
           </Button>
         </div>
       </div>
 
       {addingType !== 'none' && (
-        <Card className="bg-black border-white/10">
-          <CardHeader className="pb-4">
+        <Card className="bg-[#0a0a0a] border-white/10 rounded-xl overflow-hidden">
+          <CardHeader className="pb-4 border-b border-white/[0.05]">
             <div className="flex justify-between items-center">
-              <CardTitle className="text-base text-white">
+              <CardTitle className="text-[14px] font-medium text-white">
                 Add {addingType === 'text' ? 'Note' : addingType === 'link' ? 'URL' : 'File'}
               </CardTitle>
-              <button onClick={() => setAddingType('none')} className="text-gray-400 hover:text-white text-sm">Cancel</button>
+              <button onClick={() => setAddingType('none')} className="text-zinc-500 hover:text-white text-[13px] transition-colors">Cancel</button>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             {addingType === 'text' && (
               <form onSubmit={handleAddText} className="space-y-4">
-                <Input name="title" placeholder="Title (e.g. Q3 Sales Call Summary)" required />
+                <Input name="title" placeholder="Title (e.g. Q3 Sales Call Summary)" required className="bg-black border-white/10 focus:ring-white/20 h-10 text-[14px]" />
                 <textarea
                   name="content"
-                  className="flex min-h-[150px] w-full rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-maroon"
+                  className="flex min-h-[150px] w-full rounded-md border border-white/10 bg-black px-3 py-2 text-[14px] text-white placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all"
                   placeholder="Paste your notes here..."
                   required
                 />
-                {error && <div className="text-sm text-brand-crimson">{error}</div>}
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Save Note
-                </Button>
+                {error && <div className="text-[12px] text-red-400">{error}</div>}
+                <div className="flex justify-end">
+                  <Button type="submit" disabled={isSubmitting} className="bg-white hover:bg-zinc-200 text-black font-medium h-9 px-6 transition-colors rounded-md">
+                    {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null} Save Note
+                  </Button>
+                </div>
               </form>
             )}
 
             {addingType === 'link' && (
               <form onSubmit={handleAddLink} className="space-y-4">
-                <Input name="title" placeholder="Title (e.g. Competitor Pricing Page)" required />
-                <Input name="content" type="url" placeholder="https://..." required />
-                {error && <div className="text-sm text-brand-crimson">{error}</div>}
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Save Link
-                </Button>
+                <Input name="title" placeholder="Title (e.g. Competitor Pricing Page)" required className="bg-black border-white/10 focus:ring-white/20 h-10 text-[14px]" />
+                <Input name="content" type="url" placeholder="https://..." required className="bg-black border-white/10 focus:ring-white/20 h-10 text-[14px]" />
+                {error && <div className="text-[12px] text-red-400">{error}</div>}
+                <div className="flex justify-end">
+                  <Button type="submit" disabled={isSubmitting} className="bg-white hover:bg-zinc-200 text-black font-medium h-9 px-6 transition-colors rounded-md">
+                    {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null} Save Link
+                  </Button>
+                </div>
               </form>
             )}
 
             {addingType === 'file' && (
               <form onSubmit={handleAddFile} className="space-y-4">
-                <Input name="title" placeholder="Title (Optional, defaults to filename)" />
-                <Input name="file" type="file" required className="cursor-pointer file:text-white file:bg-white/10 file:border-0 file:rounded-md file:px-4 file:py-1 hover:file:bg-white/20" />
-                {error && <div className="text-sm text-brand-crimson">{error}</div>}
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Upload File
-                </Button>
+                <Input name="title" placeholder="Title (Optional, defaults to filename)" className="bg-black border-white/10 focus:ring-white/20 h-10 text-[14px]" />
+                <Input name="file" type="file" required className="cursor-pointer file:text-white file:bg-white/10 file:border-0 file:rounded-md file:px-4 file:py-1 hover:file:bg-white/20 bg-black border-white/10 h-10 text-[14px]" />
+                {error && <div className="text-[12px] text-red-400">{error}</div>}
+                <div className="flex justify-end">
+                  <Button type="submit" disabled={isSubmitting} className="bg-white hover:bg-zinc-200 text-black font-medium h-9 px-6 transition-colors rounded-md">
+                    {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null} Upload File
+                  </Button>
+                </div>
               </form>
             )}
           </CardContent>
@@ -207,35 +213,35 @@ export function EvidenceManager({ projectId }: { projectId: string }) {
       )}
 
       {loading ? (
-        <div className="flex justify-center p-8"><Loader2 className="h-6 w-6 animate-spin text-brand-crimson" /></div>
+        <div className="flex justify-center p-12"><Loader2 className="h-5 w-5 animate-spin text-zinc-500" /></div>
       ) : evidenceList.length === 0 ? (
-        <div className="text-center py-12 border border-white/5 rounded-lg bg-white/5 border-dashed">
-          <Database className="mx-auto h-10 w-10 text-gray-600 mb-3" />
-          <h3 className="text-sm font-medium text-white">No evidence yet</h3>
-          <p className="mt-1 text-sm text-gray-400">Upload data to help the AI understand the context.</p>
+        <div className="text-center py-16 border border-white/[0.05] rounded-xl bg-[#0a0a0a]/50 border-dashed">
+          <Database className="mx-auto h-8 w-8 text-zinc-700 mb-4" />
+          <h3 className="text-[14px] font-medium text-white">No evidence yet</h3>
+          <p className="mt-1 text-[13px] text-zinc-500">Upload data to help the AI understand the decision context.</p>
         </div>
       ) : (
-        <div className="grid gap-3">
+        <div className="grid gap-2">
           {evidenceList.map((evidence) => (
-            <div key={evidence.id} className="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-white/10">
+            <div key={evidence.id} className="flex items-center justify-between p-4 rounded-lg bg-[#0a0a0a] border border-white/10 hover:border-white/20 transition-all group">
               <div className="flex items-center gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10">
-                  {evidence.type === 'text' && <FileText className="h-5 w-5 text-gray-400" />}
-                  {evidence.type === 'link' && <LinkIcon className="h-5 w-5 text-blue-400" />}
-                  {evidence.type === 'file' && <FileText className="h-5 w-5 text-brand-crimson" />}
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-white/5 border border-white/5">
+                  {evidence.type === 'text' && <FileText className="h-4 w-4 text-zinc-400" />}
+                  {evidence.type === 'link' && <LinkIcon className="h-4 w-4 text-zinc-400" />}
+                  {evidence.type === 'file' && <FileText className="h-4 w-4 text-zinc-400" />}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-white">{evidence.title}</p>
-                  <p className="text-xs text-gray-500 capitalize">{evidence.type} • {new Date(evidence.created_at).toLocaleDateString()}</p>
+                  <p className="text-[14px] font-medium text-white">{evidence.title}</p>
+                  <p className="text-[11px] text-zinc-500 capitalize">{evidence.type} • {new Date(evidence.created_at).toLocaleDateString()}</p>
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 {evidence.type === 'link' || evidence.type === 'file' ? (
-                  <Button variant="ghost" size="sm" asChild>
+                  <Button variant="ghost" size="sm" asChild className="text-[12px] text-zinc-400 hover:text-white hover:bg-white/5 h-8">
                     <a href={evidence.content} target="_blank" rel="noopener noreferrer">View</a>
                   </Button>
                 ) : null}
-                <Button variant="ghost" size="sm" className="text-gray-500 hover:text-brand-crimson hover:bg-brand-crimson/10" onClick={() => handleDelete(evidence.id, evidence.type, evidence.file_path)}>
+                <Button variant="ghost" size="sm" className="text-zinc-500 hover:text-red-400 hover:bg-red-400/10 h-8" onClick={() => handleDelete(evidence.id, evidence.type, evidence.file_path)}>
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>

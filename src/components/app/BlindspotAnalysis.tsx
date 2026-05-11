@@ -55,33 +55,33 @@ export const BlindspotAnalysis = memo(function BlindspotAnalysis({ project, onAn
 
   if (blindspots.length === 0 && !loading) {
     return (
-      <Card className="bg-white/5 border-white/10 p-20 text-center border-dashed glass-card">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-maroon/20 mb-6">
-          <ShieldAlert className="h-8 w-8 text-brand-crimson" />
+      <div className="text-center py-24 border border-white/[0.05] rounded-xl bg-[#0a0a0a]/50 border-dashed max-w-3xl mx-auto flex flex-col items-center justify-center">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-white/5 border border-white/10 mb-6">
+          <EyeOff className="h-6 w-6 text-zinc-400" />
         </div>
-        <h3 className="text-xl font-bold text-white mb-2">Audit for Cognitive Blindspots</h3>
-        <p className="text-gray-400 max-w-md mx-auto mb-8">
-          The Blindspot Agent identifies missing evidence, logical leaps, and confirmation bias within your project context to ensure a balanced decision.
+        <h3 className="text-[18px] font-medium text-white mb-2">Audit for Cognitive Blindspots</h3>
+        <p className="text-[14px] text-zinc-500 max-w-md mx-auto mb-8 leading-relaxed">
+          The Blindspot Agent identifies missing evidence and logical leaps to ensure a balanced decision context.
         </p>
-        <Button onClick={generateBlindspots} className="bg-brand-maroon hover:bg-brand-crimson text-white px-8 h-12 text-lg">
-          <EyeOff className="mr-2 h-4 w-4" /> Run Blindspot Audit
+        <Button onClick={generateBlindspots} className="bg-white hover:bg-zinc-200 text-black font-medium px-8 h-10 transition-colors rounded-md shadow-sm">
+          Run Blindspot Audit
         </Button>
-      </Card>
+      </div>
     );
   }
 
   return (
     <div className="space-y-8 relative">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h3 className="text-xl font-bold text-white flex items-center gap-2">
-            <EyeOff className="h-5 w-5 text-brand-crimson" /> Cognitive Audit
+          <h3 className="text-[16px] font-medium text-white flex items-center gap-2">
+            Cognitive Audit
           </h3>
-          <p className="text-sm text-gray-400">Detection of biases, logical leaps, and critical data gaps.</p>
+          <p className="text-[13px] text-zinc-500">Detection of biases, logical leaps, and critical data gaps.</p>
         </div>
-        <Button variant="outline" size="sm" onClick={generateBlindspots} disabled={loading} className="border-white/10 text-gray-300">
-          {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <ShieldAlert className="h-4 w-4 mr-2" />}
-          Re-audit
+        <Button variant="outline" size="sm" onClick={generateBlindspots} disabled={loading} className="border-white/10 text-white hover:bg-white/5 h-9">
+          {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <ShieldAlert className="h-4 w-4 mr-2 text-zinc-400" />}
+          Re-audit System
         </Button>
       </div>
 
@@ -90,73 +90,63 @@ export const BlindspotAnalysis = memo(function BlindspotAnalysis({ project, onAn
           {blindspots.map((spot, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              <Card className="bg-white/5 border-white/10 glass-card border-l-4 overflow-hidden" style={{ borderLeftColor: spot.impact === 'High' ? '#ef4444' : spot.impact === 'Medium' ? '#f59e0b' : '#3b82f6' }}>
-                <CardContent className="p-0">
-                  <div className="flex flex-col md:flex-row">
-                    <div className="p-8 md:w-1/2 border-b md:border-b-0 md:border-r border-white/5">
-                      <div className="flex items-center gap-2 mb-4 flex-wrap">
-                        <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded ${
-                          spot.impact === 'High' ? 'bg-red-500/10 text-red-500' :
-                          spot.impact === 'Medium' ? 'bg-amber-500/10 text-amber-500' :
-                          'bg-blue-500/10 text-blue-500'
-                        }`}>
-                          {spot.impact} Criticality
-                        </span>
-                        <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">— {spot.area}</span>
-                        {spot.biasType && (
-                          <span className="text-[10px] px-2 py-0.5 rounded bg-white/5 text-gray-400 border border-white/10 font-medium">
-                            {spot.biasType}
-                          </span>
-                        )}
-                      </div>
-                      <h4 className="text-xl font-bold text-white mb-4 leading-tight">{spot.finding}</h4>
+              <div className="bg-[#0a0a0a] border border-white/10 rounded-xl overflow-hidden group hover:border-white/20 transition-all">
+                <div className="flex flex-col md:flex-row">
+                  <div className="p-8 md:w-1/2 border-b md:border-b-0 md:border-r border-white/5">
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className={`text-[10px] font-medium uppercase tracking-widest px-2 py-0.5 rounded border ${
+                        spot.impact === 'High' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
+                        spot.impact === 'Medium' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                        'bg-zinc-500/10 text-zinc-400 border-zinc-500/20'
+                      }`}>
+                        {spot.impact}
+                      </span>
+                      <span className="text-[10px] text-zinc-600 font-medium uppercase tracking-widest">{spot.area}</span>
                     </div>
-                    <div className="p-8 md:w-1/2 bg-white/[0.02] flex flex-col gap-6">
-                      <div>
-                        <div className="flex items-center gap-2 mb-3 text-emerald-500">
-                          <CheckCircle2 className="h-4 w-4" />
-                          <span className="text-[10px] font-bold uppercase tracking-widest">Recommended Mitigation</span>
+                    <h4 className="text-[18px] font-semibold text-white leading-tight mb-4">{spot.finding}</h4>
+                    {spot.biasType && (
+                      <div className="inline-flex items-center px-2 py-0.5 rounded bg-white/5 text-zinc-500 border border-white/5 text-[10px] font-medium">
+                        {spot.biasType}
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-8 md:w-1/2 bg-white/[0.01] flex flex-col gap-6">
+                    <div>
+                      <div className="flex items-center gap-2 mb-3">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-zinc-500" />
+                        <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest">Recommended Mitigation</span>
+                      </div>
+                      <p className="text-zinc-300 text-[14px] leading-relaxed italic font-light">
+                        &ldquo;{spot.mitigation}&rdquo;
+                      </p>
+                    </div>
+                    {spot.evidenceNeeded && (
+                      <div className="pt-4 border-t border-white/5">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Search className="h-3 w-3 text-zinc-600" />
+                          <span className="text-[10px] font-medium text-zinc-600 uppercase tracking-widest">Data Gap Detected</span>
                         </div>
-                        <p className="text-gray-300 text-sm leading-relaxed italic">
-                          &ldquo;{spot.mitigation}&rdquo;
+                        <p className="text-zinc-500 text-[12px] leading-relaxed">
+                          {spot.evidenceNeeded}
                         </p>
                       </div>
-                      {spot.evidenceNeeded && (
-                        <div>
-                          <div className="flex items-center gap-2 mb-2 text-blue-400">
-                            <Search className="h-3.5 w-3.5" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest">Evidence Needed</span>
-                          </div>
-                          <p className="text-gray-400 text-xs leading-relaxed">
-                            {spot.evidenceNeeded}
-                          </p>
-                        </div>
-                      )}
-                      <button className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-crimson hover:text-white transition-colors flex items-center mt-auto">
-                        Add Evidence to Resolve <ChevronRight className="ml-1 h-3 w-3" />
-                      </button>
-                    </div>
+                    )}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </motion.div>
           ))}
         </AnimatePresence>
       </div>
 
       {loading && (
-        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm z-20 flex flex-col items-center justify-center rounded-xl">
-          <div className="relative mb-4">
-            <div className="h-16 w-16 rounded-full border-b-2 border-brand-crimson animate-spin"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <EyeOff className="h-6 w-6 text-brand-crimson animate-pulse" />
-            </div>
-          </div>
-          <p className="text-white font-medium text-sm animate-pulse tracking-widest uppercase">Auditing Cognitive Space</p>
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-20 flex flex-col items-center justify-center rounded-xl">
+          <Loader2 className="h-6 w-6 text-zinc-400 animate-spin mb-4" />
+          <p className="text-white font-medium text-[13px] tracking-widest uppercase">Analyzing cognitive space...</p>
         </div>
       )}
     </div>

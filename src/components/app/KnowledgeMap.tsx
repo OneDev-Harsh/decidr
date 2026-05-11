@@ -9,16 +9,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { KnowledgeNode, KnowledgeEdge } from "@/lib/types";
 
 const NODE_COLORS: Record<string, string> = {
-  VARIABLE: '#3b82f6',
-  ASSUMPTION: '#a855f7',
-  FACT: '#10b981',
-  RISK: '#ef4444',
+  VARIABLE: '#71717a', // zinc-400
+  ASSUMPTION: '#94a3b8', // slate-400
+  FACT: '#52525b', // zinc-600
+  RISK: '#450a0a', // red-950 (subtle)
 };
 
 const EDGE_COLORS: Record<string, string> = {
   CONTRADICTS: '#ef4444',
   SUPPORTS: '#10b981',
-  IMPACTS: '#64748b',
+  IMPACTS: '#27272a',
 };
 
 // ─── Force-Directed Layout ──────────────────────────────────────
@@ -161,7 +161,9 @@ export const KnowledgeMap = memo(function KnowledgeMap({ project, onAnalysisComp
     }
   }
 
-  // ─── Zoom ─────────────────────────────────────────────────
+  // ─── Zoom, Pan, Filter & Search stay the same (omitted for brevity in replacement but usually included in full replace) ───
+  // ... handleZoom, handleWheel, handleFit, handleMouseDown, handleMouseMove, handleMouseUp, toggleFilter, filteredNodes, filteredNodeIds, filteredEdges ...
+
   const handleZoom = useCallback((factor: number) => {
     setViewBox(prev => {
       const cx = prev.x + prev.w / 2;
@@ -181,7 +183,6 @@ export const KnowledgeMap = memo(function KnowledgeMap({ project, onAnalysisComp
     setViewBox({ x: 0, y: 0, w: 1000, h: 600 });
   }, []);
 
-  // ─── Pan ──────────────────────────────────────────────────
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (e.button !== 0) return;
     setIsPanning(true);
@@ -200,7 +201,6 @@ export const KnowledgeMap = memo(function KnowledgeMap({ project, onAnalysisComp
 
   const handleMouseUp = useCallback(() => setIsPanning(false), []);
 
-  // ─── Filter & Search ──────────────────────────────────────
   const toggleFilter = (type: string) => {
     setActiveFilters(prev => {
       const next = new Set(prev);
@@ -226,75 +226,65 @@ export const KnowledgeMap = memo(function KnowledgeMap({ project, onAnalysisComp
   // ─── Empty State ──────────────────────────────────────────
   if (nodes.length === 0 && !loading) {
     return (
-      <Card className="bg-white/5 border-white/10 p-20 text-center border-dashed glass-card relative overflow-hidden h-[650px] flex flex-col items-center justify-center">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(153,27,27,0.05)_0%,transparent_70%)] pointer-events-none" />
-        <div className="relative z-10">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-maroon/20 mb-6 shadow-[0_0_30px_rgba(153,27,27,0.2)]">
-            <Share2 className="h-8 w-8 text-brand-crimson" />
-          </div>
-          <h3 className="text-xl font-bold text-white mb-2 tracking-tight">Visualize the Decision Topology</h3>
-          <p className="text-gray-400 max-w-md mx-auto mb-8 leading-relaxed">
-            Generate a semantic map of variables, risks, and facts to identify critical paths and structural contradictions in your strategic logic.
-          </p>
-          {error && <p className="text-sm text-brand-crimson mb-4 px-4 py-2 bg-brand-crimson/10 border border-brand-crimson/20 rounded-lg">{error}</p>}
-          <Button onClick={generateGraph} className="bg-brand-maroon hover:bg-brand-crimson text-white px-10 h-12 text-sm font-bold uppercase tracking-widest shadow-lg shadow-brand-maroon/20">
-            Initialize Knowledge Map
-          </Button>
+      <div className="text-center py-32 border border-white/[0.05] rounded-xl bg-[#0a0a0a]/50 border-dashed max-w-3xl mx-auto flex flex-col items-center justify-center h-[600px]">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-white/5 border border-white/10 mb-6">
+          <Share2 className="h-6 w-6 text-zinc-400" />
         </div>
-      </Card>
+        <h3 className="text-[18px] font-medium text-white mb-2">Visualize the Decision Topology</h3>
+        <p className="text-[14px] text-zinc-500 max-w-md mx-auto mb-8 leading-relaxed">
+          Generate a semantic map of variables, risks, and facts to identify structural dependencies in your strategic logic.
+        </p>
+        <Button onClick={generateGraph} className="bg-white hover:bg-zinc-200 text-black font-medium px-8 h-10 transition-colors rounded-md shadow-sm">
+          Initialize Knowledge Map
+        </Button>
+      </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-[650px] gap-4">
-      {/* Dynamic Command Center */}
-      <div className="flex items-center justify-between gap-4 bg-black/40 backdrop-blur-xl p-3 rounded-xl border border-white/5 shadow-2xl">
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+    <div className="flex flex-col h-[700px] gap-6">
+      {/* Search & Filters */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-4 w-full md:w-auto">
+          <div className="relative flex-1 md:flex-none">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
             <input
               type="text"
               placeholder="Search nodes..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-10 pl-10 pr-4 text-sm bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-maroon/40 w-64 transition-all"
+              className="h-9 pl-9 pr-4 text-[13px] bg-black border border-white/10 rounded-md text-white placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-white/20 w-full md:w-64 transition-all"
             />
           </div>
-          <div className="h-6 w-px bg-white/5 mx-1" />
-          <div className="flex gap-2">
+          <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
             {Object.entries(NODE_COLORS).map(([type, color]) => (
               <button
                 key={type}
                 onClick={() => toggleFilter(type)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.1em] transition-all border ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-[11px] font-medium transition-all border ${
                   activeFilters.has(type)
                     ? 'bg-white/10 border-white/20 text-white'
-                    : 'bg-transparent border-white/5 text-gray-500 hover:border-white/10'
+                    : 'bg-transparent border-white/5 text-zinc-500 hover:border-white/10'
                 }`}
               >
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: activeFilters.has(type) ? color : '#222' }} />
-                {type}
+                <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: activeFilters.has(type) ? color : '#333' }} />
+                {type.toLowerCase()}
               </button>
             ))}
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={generateGraph} disabled={loading} className="bg-brand-maroon/10 border-brand-maroon/20 text-brand-crimson hover:bg-brand-maroon/20 transition-all h-10 px-4">
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Share2 className="h-4 w-4" />}
-            <span className="ml-2 font-bold uppercase tracking-widest text-[10px]">Refresh Analysis</span>
-          </Button>
-        </div>
+        <Button variant="outline" size="sm" onClick={generateGraph} disabled={loading} className="border-white/10 text-white hover:bg-white/5 h-9 shrink-0">
+          {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Share2 className="h-4 w-4 mr-2 text-zinc-400" />}
+          Refresh Analysis
+        </Button>
       </div>
 
-      {/* Main Analytical Canvas */}
-      <div className="flex-1 flex gap-4 min-h-0">
-        {/* SVG Visualization Area */}
-        <div className="flex-1 bg-[#050505] rounded-xl border border-white/5 relative overflow-hidden group/graph shadow-inner">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(153,27,27,0.03)_0%,transparent_70%)] pointer-events-none" />
-          <div className="absolute top-4 left-4 text-[10px] font-bold text-gray-700 uppercase tracking-[0.2em] pointer-events-none flex items-center gap-2">
-            <div className="h-1 w-1 rounded-full bg-brand-crimson animate-pulse" />
-            Strategic Topology • {filteredNodes.length} Active Nodes
+      {/* Main Canvas */}
+      <div className="flex-1 flex gap-6 min-h-0">
+        <div className="flex-1 bg-black rounded-xl border border-white/10 relative overflow-hidden group/graph shadow-inner">
+          <div className="absolute top-4 left-4 text-[11px] font-medium text-zinc-600 uppercase tracking-widest pointer-events-none flex items-center gap-2">
+            Topology View • {filteredNodes.length} Nodes
           </div>
 
           <svg
@@ -307,27 +297,14 @@ export const KnowledgeMap = memo(function KnowledgeMap({ project, onAnalysisComp
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
           >
-            <defs>
-              <filter id="node-glow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="12" result="blur" />
-                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-              </filter>
-              {Object.entries(NODE_COLORS).map(([type, color]) => (
-                <radialGradient key={type} id={`grad-${type}`}>
-                  <stop offset="0%" stopColor={color} stopOpacity="1" />
-                  <stop offset="100%" stopColor={color} stopOpacity="0.7" />
-                </radialGradient>
-              ))}
-            </defs>
-
-            {/* Logical Edges */}
-            <g className="edges">
+            {/* Edges */}
+            <g>
               {filteredEdges.map((edge, i) => {
                 const source = nodes.find(n => n.id === edge.source);
                 const target = nodes.find(n => n.id === edge.target);
                 if (!source || !target) return null;
                 const isHovered = hoveredEdge === i;
-                const color = EDGE_COLORS[edge.type] || '#333';
+                const color = isHovered ? '#fff' : EDGE_COLORS[edge.type] || '#27272a';
                 return (
                   <motion.line
                     key={i}
@@ -335,10 +312,10 @@ export const KnowledgeMap = memo(function KnowledgeMap({ project, onAnalysisComp
                     y1={source.y}
                     x2={target.x}
                     y2={target.y}
-                    stroke={isHovered ? '#fff' : color}
-                    strokeWidth={isHovered ? 2 : 1}
-                    strokeOpacity={isHovered ? 1 : 0.3}
-                    strokeDasharray={edge.type === 'CONTRADICTS' ? "5,5" : "none"}
+                    stroke={color}
+                    strokeWidth={isHovered ? 2 : 1.5}
+                    strokeOpacity={isHovered ? 1 : 0.4}
+                    strokeDasharray={edge.type === 'CONTRADICTS' ? "4,4" : "none"}
                     className="transition-all duration-300"
                     onMouseEnter={() => setHoveredEdge(i)}
                     onMouseLeave={() => setHoveredEdge(null)}
@@ -347,47 +324,34 @@ export const KnowledgeMap = memo(function KnowledgeMap({ project, onAnalysisComp
               })}
             </g>
 
-            {/* Strategic Nodes */}
-            <g className="nodes">
+            {/* Nodes */}
+            <g>
               {filteredNodes.map((node) => (
                 <motion.g
                   key={node.id}
                   className="cursor-pointer"
                   onClick={(e) => { e.stopPropagation(); setSelectedNode(node); }}
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
                   whileHover={{ scale: 1.05 }}
                 >
-                  {/* Outer Aura */}
                   <circle
                     cx={node.x}
                     cy={node.y}
-                    r={35}
+                    r={selectedNode?.id === node.id ? 24 : 18}
                     fill={NODE_COLORS[node.type]}
-                    fillOpacity={selectedNode?.id === node.id ? 0.15 : 0}
-                    className="transition-all duration-500"
-                  />
-                  {/* Core Circle */}
-                  <circle
-                    cx={node.x}
-                    cy={node.y}
-                    r={20}
-                    fill={`url(#grad-${node.type})`}
-                    stroke={selectedNode?.id === node.id ? '#fff' : 'rgba(255,255,255,0.05)'}
-                    strokeWidth={selectedNode?.id === node.id ? 3 : 1}
-                    style={{ filter: selectedNode?.id === node.id ? 'url(#node-glow)' : 'none' }}
+                    stroke={selectedNode?.id === node.id ? '#fff' : 'rgba(255,255,255,0.1)'}
+                    strokeWidth={selectedNode?.id === node.id ? 2 : 1}
                     className="transition-all duration-300"
                   />
-                  {/* Metadata Label */}
                   <text
                     x={node.x}
-                    y={node.y! + 38}
+                    y={node.y! + 32}
                     textAnchor="middle"
-                    fill={selectedNode?.id === node.id ? '#fff' : '#888'}
-                    className="text-[12px] font-bold pointer-events-none select-none tracking-tight"
-                    filter={selectedNode?.id === node.id ? 'drop-shadow(0 0 8px rgba(255,255,255,0.5))' : 'none'}
+                    fill={selectedNode?.id === node.id ? '#fff' : '#71717a'}
+                    className="text-[13px] font-medium pointer-events-none select-none"
                   >
-                    {node.label.length > 22 ? node.label.substring(0, 20) + '...' : node.label}
+                    {node.label.length > 20 ? node.label.substring(0, 18) + '...' : node.label}
                   </text>
                 </motion.g>
               ))}
@@ -395,105 +359,81 @@ export const KnowledgeMap = memo(function KnowledgeMap({ project, onAnalysisComp
           </svg>
 
           {loading && (
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-md flex flex-col items-center justify-center z-50">
-              <Loader2 className="h-10 w-10 text-brand-crimson animate-spin mb-4" />
-              <p className="text-white font-bold tracking-[0.2em] uppercase text-[10px] animate-pulse">Mapping Strategic Dependencies...</p>
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex flex-col items-center justify-center z-50">
+              <Loader2 className="h-6 w-6 text-zinc-400 animate-spin mb-4" />
+              <p className="text-white font-medium text-[13px] tracking-widest uppercase">Mapping dependencies...</p>
             </div>
           )}
         </div>
 
-        {/* Intelligence Sidebar */}
-        <div className="w-80 bg-white/5 rounded-xl border border-white/5 p-6 flex flex-col gap-6 glass-card shadow-2xl overflow-y-auto">
-          <AnimatePresence mode="wait">
-            {selectedNode ? (
-              <motion.div
-                key={selectedNode.id}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="flex flex-col h-full"
-              >
-                <div className="flex items-center justify-between mb-6">
-                  <div className="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest bg-white/10" style={{ color: NODE_COLORS[selectedNode.type] }}>
-                    {selectedNode.type}
-                  </div>
-                  <Button variant="ghost" size="icon" className="h-6 w-6 text-gray-500 hover:text-white" onClick={() => setSelectedNode(null)}>
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
+        {/* Sidebar */}
+        <AnimatePresence>
+          {selectedNode ? (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="w-80 bg-[#0a0a0a] rounded-xl border border-white/10 p-6 flex flex-col gap-6 shadow-2xl overflow-y-auto"
+            >
+              <div className="flex items-center justify-between">
+                <span className="px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-widest bg-white/5 border border-white/5" style={{ color: NODE_COLORS[selectedNode.type] }}>
+                  {selectedNode.type}
+                </span>
+                <button onClick={() => setSelectedNode(null)} className="text-zinc-500 hover:text-white">
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
 
-                <h4 className="text-xl font-bold text-white mb-2 leading-tight tracking-tight">
+              <div>
+                <h4 className="text-[18px] font-semibold text-white mb-2 leading-tight">
                   {selectedNode.label}
                 </h4>
-                
-                <div className="h-px w-full bg-white/5 my-4" />
-
-                <div className="space-y-4">
-                  <div className="p-4 bg-black/40 rounded-lg border border-white/5">
-                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-2">Description</span>
-                    <p className="text-sm text-gray-400 leading-relaxed italic">
-                      {selectedNode.description || `Analytical context for ${selectedNode.label.toLowerCase()} is currently being indexed.`}
-                    </p>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h5 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
-                      <Share2 className="h-3 w-3" /> Active Connections
-                    </h5>
-                    <div className="space-y-2">
-                      {edges.filter(e => e.source === selectedNode.id || e.target === selectedNode.id).map((edge, i) => {
-                        const otherNodeId = edge.source === selectedNode.id ? edge.target : edge.source;
-                        const otherNode = nodes.find(n => n.id === otherNodeId);
-                        const isContradiction = edge.type === 'CONTRADICTS';
-                        const isSupport = edge.type === 'SUPPORTS';
-                        
-                        return (
-                          <div
-                            key={i}
-                            className="p-3 bg-white/5 rounded-lg border border-white/5 flex flex-col gap-1.5 cursor-pointer hover:bg-white/10 transition-colors group/conn"
-                            onClick={() => { if (otherNode) setSelectedNode(otherNode); }}
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className={`text-[10px] font-bold ${
-                                isContradiction ? 'text-red-500' : isSupport ? 'text-emerald-500' : 'text-blue-400'
-                              }`}>
-                                {edge.type}
-                              </span>
-                              <span className="text-[9px] text-gray-600 uppercase font-mono">
-                                {edge.source === selectedNode.id ? 'OUTGOING' : 'INCOMING'}
-                              </span>
-                            </div>
-                            <p className="text-xs text-white font-medium group-hover/conn:text-brand-crimson transition-colors">{otherNode?.label || 'Unknown Vector'}</p>
-                            {edge.label && <p className="text-[10px] text-gray-500 italic leading-tight">{edge.label}</p>}
-                          </div>
-                        );
-                      })}
-                      {edges.filter(e => e.source === selectedNode.id || e.target === selectedNode.id).length === 0 && (
-                        <p className="text-xs text-gray-600 italic px-2">No logical dependencies detected.</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* <div className="mt-auto pt-8">
-                  <Button className="w-full bg-white/5 hover:bg-white/10 text-white border-white/10 text-[10px] font-bold uppercase tracking-[0.2em] h-11 transition-all">
-                    Trace Dependency Stream
-                  </Button>
-                </div> */}
-              </motion.div>
-            ) : (
-              <div className="flex-1 flex flex-col items-center justify-center text-center">
-                <div className="h-16 w-16 rounded-full border border-dashed border-gray-800 flex items-center justify-center mb-6 opacity-40">
-                  <Info className="h-6 w-6 text-gray-600" />
-                </div>
-                <h5 className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-3">System Ready</h5>
-                <p className="text-xs text-gray-600 px-4 leading-relaxed">
-                  Select a strategic node to perform deep-stream dependency analysis and verification.
+                <p className="text-[13px] text-zinc-400 leading-relaxed italic">
+                  {selectedNode.description || "Analytical context being indexed."}
                 </p>
               </div>
-            )}
-          </AnimatePresence>
-        </div>
+              
+              <div className="h-px bg-white/[0.05]" />
+
+              <div className="space-y-4">
+                <h5 className="text-[11px] font-medium text-zinc-500 uppercase tracking-widest flex items-center gap-2">
+                  <Share2 className="h-3 w-3" /> Connections
+                </h5>
+                <div className="space-y-2">
+                  {edges.filter(e => e.source === selectedNode.id || e.target === selectedNode.id).map((edge, i) => {
+                    const otherNodeId = edge.source === selectedNode.id ? edge.target : edge.source;
+                    const otherNode = nodes.find(n => n.id === otherNodeId);
+                    
+                    return (
+                      <div
+                        key={i}
+                        className="p-3 bg-black border border-white/5 rounded-lg flex flex-col gap-1.5 cursor-pointer hover:border-white/20 transition-all"
+                        onClick={() => { if (otherNode) setSelectedNode(otherNode); }}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className={`text-[10px] font-medium ${
+                            edge.type === 'CONTRADICTS' ? 'text-red-400' : 
+                            edge.type === 'SUPPORTS' ? 'text-emerald-400' : 'text-zinc-400'
+                          }`}>
+                            {edge.type}
+                          </span>
+                        </div>
+                        <p className="text-[13px] text-white font-medium">{otherNode?.label || 'Unknown Vector'}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </motion.div>
+          ) : (
+            <div className="w-80 bg-[#0a0a0a]/50 rounded-xl border border-white/[0.05] border-dashed p-6 flex flex-col items-center justify-center text-center">
+              <Info className="h-6 w-6 text-zinc-700 mb-4" />
+              <p className="text-[13px] text-zinc-600 leading-relaxed">
+                Select a strategic node to perform dependency analysis.
+              </p>
+            </div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

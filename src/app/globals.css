@@ -3,16 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --background: #050505;
+  --background: #000000;
   --foreground: #ffffff;
-  --brand-maroon: #4c0519;
-  --brand-crimson: #9f1239;
-  --glass: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  --brand-crimson: #ef4444;
+  --glass: rgba(255, 255, 255, 0.02);
+  --glass-border: rgba(255, 255, 255, 0.06);
 }
 
 * {
-  border-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 body {
@@ -25,7 +24,7 @@ body {
 }
 
 ::selection {
-  background-color: var(--brand-crimson);
+  background-color: rgba(255, 255, 255, 0.1);
   color: white;
 }
 
@@ -34,18 +33,12 @@ body {
     background: var(--glass);
     backdrop-filter: blur(12px);
     border: 1px solid var(--glass-border);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   }
   
   .glass-card-hover:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.15);
-    transform: translateY(-2px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .text-glow {
-    text-shadow: 0 0 15px rgba(159, 18, 57, 0.4);
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.12);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .no-scrollbar::-webkit-scrollbar {
@@ -59,7 +52,8 @@ body {
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -67,10 +61,10 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--brand-crimson);
+  background: rgba(255, 255, 255, 0.15);
 }

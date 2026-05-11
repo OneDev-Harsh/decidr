@@ -64,67 +64,77 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="flex-1 px-8 py-10 max-w-[800px] mx-auto min-h-screen bg-black">
-      <div className="mb-10">
-        <h1 className="text-2xl font-semibold tracking-tight text-white mb-1">Settings</h1>
-        <p className="text-[14px] text-zinc-400">Manage your account preferences and security settings.</p>
+    <div className="flex-1 px-8 py-12 max-w-[800px] mx-auto min-h-screen bg-black space-y-12">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight text-white mb-1">Account Configuration</h1>
+        <p className="text-[14px] text-zinc-500">Manage global profile preferences and security protocols.</p>
       </div>
 
-      <div className="space-y-8">
-        <div className="bg-[#0a0a0a] border border-white/10 rounded-xl overflow-hidden">
-          <div className="p-6 border-b border-white/[0.05]">
+      <div className="space-y-12">
+        {/* Profile Section */}
+        <div className="bg-[#0a0a0a] border border-white/10 rounded-xl overflow-hidden shadow-2xl">
+          <div className="p-8 border-b border-white/[0.05]">
             <div className="flex items-center gap-2 mb-1">
-              <User className="h-4 w-4 text-zinc-400" />
-              <h2 className="text-[15px] font-medium text-white">Profile Information</h2>
+              <User className="h-4 w-4 text-zinc-500" />
+              <h2 className="text-[16px] font-medium text-white">Profile Identity</h2>
             </div>
-            <p className="text-[13px] text-zinc-500">Update your public name and contact email.</p>
+            <p className="text-[13px] text-zinc-500">Update your public identification and contact coordinates.</p>
           </div>
-          <form onSubmit={handleSave} className="p-6">
-            <div className="space-y-5">
-              <div className="space-y-2">
+          <form onSubmit={handleSave} className="p-8">
+            <div className="space-y-6">
+              <div className="space-y-2 max-w-md">
                 <label className="text-[13px] font-medium text-zinc-300">Full Name</label>
-                <Input name="name" defaultValue={profile?.full_name || user?.name} className="max-w-md bg-black border-white/10 text-white placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-white/20 h-10" />
+                <input 
+                  name="name" 
+                  defaultValue={profile?.full_name || user?.name} 
+                  className="w-full bg-black border border-white/10 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-1 focus:ring-white/20 transition-all text-[14px] h-10" 
+                />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 max-w-md">
                 <label className="text-[13px] font-medium text-zinc-300">Email Address</label>
-                <Input value={user?.email} disabled className="max-w-md bg-black border-white/10 text-white/50 opacity-60 cursor-not-allowed h-10" />
-                <p className="text-[12px] text-zinc-500 mt-1">Email cannot be changed directly.</p>
+                <input 
+                  value={user?.email} 
+                  disabled 
+                  className="w-full bg-black border border-white/10 rounded-md px-4 py-2 text-zinc-500 opacity-60 cursor-not-allowed text-[14px] h-10" 
+                />
+                <p className="text-[11px] text-zinc-600 mt-1">Identity email is locked to authentication provider.</p>
               </div>
               {message && (
-                <div className={`text-[13px] px-4 py-3 rounded-lg border ${
-                  message.includes('Error') ? 'bg-red-400/10 text-red-400 border-red-400/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                <div className={`text-[13px] font-medium p-4 rounded-lg border flex items-center gap-3 ${
+                  message.includes('Error') ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                 }`}>
                   {message}
                 </div>
               )}
             </div>
-            <div className="mt-6">
-              <Button type="submit" disabled={saving} className="bg-white hover:bg-zinc-200 text-black font-medium transition-colors h-9 px-4 rounded-md">
+            <div className="mt-10 pt-6 border-t border-white/[0.05] flex justify-end">
+              <Button type="submit" disabled={saving} className="bg-white hover:bg-zinc-200 text-black font-medium transition-colors h-10 px-8 rounded-md shadow-sm">
                 {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin text-zinc-500" />} Save Changes
               </Button>
             </div>
           </form>
         </div>
 
-        <div className="bg-[#0a0a0a] border border-white/10 rounded-xl overflow-hidden opacity-50">
-          <div className="p-6">
-            <div className="flex items-center gap-2 mb-1">
-              <Shield className="h-4 w-4 text-zinc-400" />
-              <h2 className="text-[15px] font-medium text-white">Security & API</h2>
+        {/* Placeholder Sections */}
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-8 opacity-40 grayscale group hover:opacity-60 transition-opacity">
+            <div className="flex items-center gap-2 mb-3">
+              <Shield className="h-4 w-4 text-zinc-500" />
+              <h3 className="text-[15px] font-medium text-white">Security & API</h3>
             </div>
-            <p className="text-[13px] text-zinc-500 mb-4">Manage your password and API access keys.</p>
-            <p className="text-[12px] text-zinc-600 italic">Advanced security settings coming in the next release.</p>
+            <p className="text-[13px] text-zinc-600 leading-relaxed italic">
+              Advanced security controls and API key management are currently restricted.
+            </p>
           </div>
-        </div>
 
-        <div className="bg-[#0a0a0a] border border-white/10 rounded-xl overflow-hidden opacity-50">
-          <div className="p-6">
-            <div className="flex items-center gap-2 mb-1">
-              <Bell className="h-4 w-4 text-zinc-400" />
-              <h2 className="text-[15px] font-medium text-white">Notifications</h2>
+          <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-8 opacity-40 grayscale group hover:opacity-60 transition-opacity">
+            <div className="flex items-center gap-2 mb-3">
+              <Bell className="h-4 w-4 text-zinc-500" />
+              <h3 className="text-[15px] font-medium text-white">Intelligence Alerts</h3>
             </div>
-            <p className="text-[13px] text-zinc-500 mb-4">Configure how you receive intelligence alerts.</p>
-            <p className="text-[12px] text-zinc-600 italic">Notification preferences coming soon.</p>
+            <p className="text-[13px] text-zinc-600 leading-relaxed italic">
+              Notification protocols and real-time alert configuration coming soon.
+            </p>
           </div>
         </div>
       </div>

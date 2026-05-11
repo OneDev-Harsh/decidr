@@ -337,29 +337,25 @@ export default function ProjectPage() {
               <>
                 {activeTab === "context" && (
                   <div className="grid gap-6 md:grid-cols-2">
-                    <Card className="bg-white/5 border-white/10 h-fit glass-card">
-                      <CardHeader>
-                        <CardTitle className="text-lg text-white">Problem Statement</CardTitle>
-                        <CardDescription className="text-gray-400">The core question to answer.</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className={`p-4 bg-black/50 rounded-md border border-white/5 text-gray-300 min-h-[100px] ${!project.problem_statement ? 'flex items-center justify-center italic' : ''}`}>
-                          {project.problem_statement || "Not defined yet. Click edit to add."}
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-8 hover:border-white/20 transition-all">
+                      <div className="flex items-center gap-2 mb-4">
+                        <Target className="h-4 w-4 text-zinc-500" />
+                        <h4 className="text-[14px] font-medium text-zinc-500 uppercase tracking-widest">Problem Statement</h4>
+                      </div>
+                      <p className={`text-[15px] text-zinc-300 leading-relaxed font-light ${!project.problem_statement ? 'italic text-zinc-600' : ''}`}>
+                        {project.problem_statement || "Not defined yet. Access edit mode to configure core problem statement."}
+                      </p>
+                    </div>
 
-                    <Card className="bg-white/5 border-white/10 h-fit glass-card">
-                      <CardHeader>
-                        <CardTitle className="text-lg text-white">Goals & Constraints</CardTitle>
-                        <CardDescription className="text-gray-400">What must be achieved and avoided.</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className={`p-4 bg-black/50 rounded-md border border-white/5 text-gray-300 min-h-[100px] ${!project.goals ? 'flex items-center justify-center italic' : ''}`}>
-                          {project.goals || "Not defined yet. Click edit to add."}
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-8 hover:border-white/20 transition-all">
+                      <div className="flex items-center gap-2 mb-4">
+                        <CheckCircle2 className="h-4 w-4 text-zinc-500" />
+                        <h4 className="text-[14px] font-medium text-zinc-500 uppercase tracking-widest">Goals & Constraints</h4>
+                      </div>
+                      <p className={`text-[15px] text-zinc-300 leading-relaxed font-light ${!project.goals ? 'italic text-zinc-600' : ''}`}>
+                        {project.goals || "Not defined yet. Access edit mode to configure strategic goals."}
+                      </p>
+                    </div>
                   </div>
                 )}
 
@@ -372,10 +368,10 @@ export default function ProjectPage() {
                       <Button 
                         variant="secondary" 
                         size="sm" 
-                        className="bg-brand-maroon/80 backdrop-blur-md border-white/10 text-white hover:bg-brand-maroon shadow-lg h-9 px-4 text-[10px] font-bold uppercase tracking-widest"
+                        className="bg-black/80 backdrop-blur-md border border-white/10 text-white hover:bg-zinc-900 shadow-lg h-9 px-4 text-[11px] font-medium transition-all"
                         onClick={() => setIsMapModalOpen(true)}
                       >
-                        <Maximize2 className="mr-2 h-3.5 w-3.5" /> Expand Explorer
+                        <Maximize2 className="mr-2 h-4 w-4" /> Fullscreen Explorer
                       </Button>
                     </div>
                     <ErrorBoundary fallbackTitle="Knowledge Map Error">
