@@ -17,6 +17,7 @@ import {
   Search
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { NotificationCenter } from "./NotificationCenter";
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -48,10 +49,11 @@ export function Sidebar() {
         setUser(userData.user);
       }
 
-      // Fetch workspaces where user is owner or member
+      // Fetch workspaces where user is a member (owner or joined)
       const { data: workspacesData } = await insforge.database
         .from('workspaces')
-        .select('*')
+        .select('*, workspace_members!inner(user_id)')
+        .eq('workspace_members.user_id', userData.user.id)
         .order('created_at', { ascending: false });
       
       if (workspacesData) {
@@ -65,7 +67,12 @@ export function Sidebar() {
 
   async function handleSignOut() {
     await insforge.auth.signOut();
-    router.push("/login");
+    
+    // Manually clear the auth cookie for middleware
+    document.cookie = "insforge-auth-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    
+    // Use window.location.href to ensure a full page reload and middleware re-evaluation
+    window.location.href = "/login";
   }
 
   const navItems = [
@@ -211,13 +218,16 @@ export function Sidebar() {
               </div>
             )}
           </div>
-          <button
-            onClick={handleSignOut}
-            className="text-zinc-500 hover:text-white transition-colors p-1 shrink-0"
-            title="Sign out"
-          >
-            <LogOut className="h-4 w-4" />
-          </button>
+          <div className="flex items-center gap-1">
+            <NotificationCenter />
+            <button
+              onClick={handleSignOut}
+              className="text-zinc-500 hover:text-white transition-colors p-1 shrink-0"
+              title="Sign out"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       </div>
     </motion.div>

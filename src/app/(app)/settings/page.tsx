@@ -38,13 +38,20 @@ export default function SettingsPage() {
 
     const formData = new FormData(e.currentTarget);
     const full_name = formData.get("name") as string;
+    const username = formData.get("username") as string;
+    const bio = formData.get("bio") as string;
+    const activity_visibility = formData.get("activity_visibility") === "on";
 
     const { error } = await insforge.database
       .from('profiles')
       .upsert({
         id: user.id,
         full_name,
-        email: user.email
+        username,
+        bio,
+        activity_visibility,
+        email: user.email,
+        updated_at: new Date().toISOString()
       });
 
     if (error) {
@@ -81,16 +88,40 @@ export default function SettingsPage() {
             <p className="text-[13px] text-zinc-500">Update your public identification and contact coordinates.</p>
           </div>
           <form onSubmit={handleSave} className="p-8">
-            <div className="space-y-6">
-              <div className="space-y-2 max-w-md">
-                <label className="text-[13px] font-medium text-zinc-300">Full Name</label>
-                <input 
-                  name="name" 
-                  defaultValue={profile?.full_name || user?.name} 
-                  className="w-full bg-black border border-white/10 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-1 focus:ring-white/20 transition-all text-[14px] h-10" 
+            <div className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-2">
+                  <label className="text-[13px] font-medium text-zinc-300">Full Name</label>
+                  <input 
+                    name="name" 
+                    defaultValue={profile?.full_name || user?.name} 
+                    placeholder="Enter your full name"
+                    className="w-full bg-black border border-white/10 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-1 focus:ring-white/20 transition-all text-[14px] h-10" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[13px] font-medium text-zinc-300">Username</label>
+                  <input 
+                    name="username" 
+                    defaultValue={profile?.username} 
+                    placeholder="e.g. analyst_01"
+                    className="w-full bg-black border border-white/10 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-1 focus:ring-white/20 transition-all text-[14px] h-10" 
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[13px] font-medium text-zinc-300">Bio / Professional Summary</label>
+                <textarea 
+                  name="bio" 
+                  defaultValue={profile?.bio} 
+                  placeholder="Describe your strategic focus..."
+                  rows={3}
+                  className="w-full bg-black border border-white/10 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-1 focus:ring-white/20 transition-all text-[14px] resize-none" 
                 />
               </div>
-              <div className="space-y-2 max-w-md">
+
+              <div className="space-y-2">
                 <label className="text-[13px] font-medium text-zinc-300">Email Address</label>
                 <input 
                   value={user?.email} 
@@ -99,6 +130,41 @@ export default function SettingsPage() {
                 />
                 <p className="text-[11px] text-zinc-600 mt-1">Identity email is locked to authentication provider.</p>
               </div>
+
+              <div className="flex items-center gap-3 p-4 bg-white/[0.02] border border-white/5 rounded-lg">
+                <input 
+                  type="checkbox" 
+                  name="activity_visibility" 
+                  id="activity_visibility"
+                  defaultChecked={profile?.activity_visibility !== false}
+                  className="h-4 w-4 rounded border-white/10 bg-black text-white focus:ring-0 focus:ring-offset-0"
+                />
+                <div>
+                  <label htmlFor="activity_visibility" className="text-[13px] font-medium text-zinc-300">Public Activity Visibility</label>
+                  <p className="text-[11px] text-zinc-500">Allow other workspace members to see your active status and presence.</p>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[13px] font-medium text-zinc-300">Personal Invite Code</label>
+                <div className="flex gap-2">
+                  <input 
+                    value={profile?.invite_code || "Generating..."} 
+                    disabled 
+                    className="flex-1 bg-black border border-white/10 rounded-md px-4 py-2 text-zinc-400 text-[14px] h-10 font-mono" 
+                  />
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => navigator.clipboard.writeText(profile?.invite_code)}
+                    className="border-white/10 text-white hover:bg-white/5 h-10"
+                  >
+                    Copy
+                  </Button>
+                </div>
+                <p className="text-[11px] text-zinc-600">Share this code to allow others to find and invite you directly.</p>
+              </div>
+
               {message && (
                 <div className={`text-[13px] font-medium p-4 rounded-lg border flex items-center gap-3 ${
                   message.includes('Error') ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'

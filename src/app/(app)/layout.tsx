@@ -1,4 +1,5 @@
 import { Sidebar } from "@/components/app/Sidebar";
+import { PresenceManager } from "@/components/app/PresenceManager";
 
 export default function AppLayout({
   children,
@@ -7,6 +8,7 @@ export default function AppLayout({
 }) {
   return (
     <div className="flex h-screen overflow-hidden bg-black text-white">
+      <PresenceManager />
       <Sidebar />
       <main className="flex-1 overflow-y-auto bg-[#050505]">
         {children}

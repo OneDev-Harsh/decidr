@@ -14,6 +14,8 @@ import { BlindspotAnalysis } from "@/components/app/BlindspotAnalysis";
 import { KnowledgeMap } from "@/components/app/KnowledgeMap";
 import { DecisionTimeline } from "@/components/app/DecisionTimeline";
 import { ContradictionAlert } from "@/components/app/ContradictionAlert";
+import { DiscussionSection } from "@/components/app/DiscussionSection";
+import { CollaborationAvatars } from "@/components/app/CollaborationAvatars";
 import { ErrorBoundary } from "@/components/app/ErrorBoundary";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -58,6 +60,15 @@ export default function ProjectPage() {
       if (projData.last_contradictions) {
         setContradictions(projData.last_contradictions);
       }
+
+      // Fetch unresolved comments count
+      const { count: commentCount } = await insforge.database
+        .from('comments')
+        .select('*', { count: 'exact', head: true })
+        .eq('project_id', projectId)
+        .is('resolved_at', null);
+
+      setProject(prev => ({ ...prev, _unresolvedComments: commentCount || 0 }));
       
       setLoading(false);
     }
@@ -154,6 +165,7 @@ export default function ProjectPage() {
     { id: "scenarios", name: "Scenarios", icon: GitMerge },
     { id: "graph", name: "Knowledge Map", icon: Share2 },
     { id: "timeline", name: "Decision Timeline", icon: Clock },
+    { id: "debate", name: "Discussions", icon: MessageSquare },
     { id: "recommendation", name: "Recommendation", icon: CheckCircle },
   ];
 
@@ -169,8 +181,9 @@ export default function ProjectPage() {
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-              <div className="flex items-center gap-3 mb-1">
+              <div className="flex items-center gap-4 mb-1">
                 <h1 className="text-2xl font-semibold tracking-tight text-white">{project?.title}</h1>
+                <CollaborationAvatars channel={`presence:project:${projectId}`} />
                 <span className="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium bg-white/10 text-white capitalize">
                   {project?.status}
                 </span>
@@ -218,6 +231,9 @@ export default function ProjectPage() {
                 )}
                 {tab.id === 'recommendation' && project?.status === 'DECIDED' && (
                   <CheckCircle2 className="ml-2 h-3 w-3 text-emerald-500" />
+                )}
+                {tab.id === 'debate' && project?._unresolvedComments > 0 && (
+                  <span className="ml-2 h-2 w-2 rounded-full bg-brand-maroon animate-pulse" />
                 )}
               </button>
             ))}
@@ -380,6 +396,7 @@ export default function ProjectPage() {
                   </div>
                 )}
                 {activeTab === "timeline" && <ErrorBoundary fallbackTitle="Timeline Error"><DecisionTimeline projectId={projectId} /></ErrorBoundary>}
+                {activeTab === "debate" && <ErrorBoundary fallbackTitle="Discussions Error"><DiscussionSection projectId={projectId} /></ErrorBoundary>}
                 {activeTab === "recommendation" && <ErrorBoundary fallbackTitle="Recommendation Error"><RecommendationView project={project} onAnalysisComplete={handleAnalysisComplete} /></ErrorBoundary>}
               </>
             )}

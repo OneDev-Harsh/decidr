@@ -49,7 +49,7 @@ export default function DashboardPage() {
 
       const { data: activityData } = await insforge.database
         .from('project_activity')
-        .select('*, projects(title)')
+        .select('*, projects(title), profiles(full_name, avatar_url, username)')
         .order('created_at', { ascending: false })
         .limit(10);
       
@@ -94,8 +94,8 @@ export default function DashboardPage() {
         {[
           { label: 'Decision Streams', value: recentProjects.length, icon: Zap },
           { label: 'Critical Priority', value: recentProjects.filter(p => p.priority === 'high').length, icon: ShieldCheck },
-          { label: 'System Events (24h)', value: activities.length, icon: Activity },
-          { label: 'System Health', value: 'Nominal', icon: BarChart3 },
+          { label: 'Team Activity', value: activities.length, icon: Activity },
+          { label: 'Active Collaborators', value: new Set(activities.map(a => a.user_id)).size, icon: BarChart3 },
         ].map((stat, i) => (
           <div key={i} className="bg-[#0a0a0a] border border-white/10 rounded-lg p-5 flex flex-col justify-between h-[100px]">
             <div className="flex items-center justify-between">
@@ -170,23 +170,30 @@ export default function DashboardPage() {
             ) : (
               <div className="space-y-6 relative before:absolute before:left-1.5 before:top-2 before:bottom-2 before:w-px before:bg-white/10">
                 {activities.map((activity) => (
-                  <div key={activity.id} className="relative pl-6 group">
-                    <div className="absolute left-[3px] top-[7px] h-1.5 w-1.5 rounded-full bg-zinc-600 group-hover:bg-brand-crimson transition-colors" />
-                    <div>
-                      <p className="text-[13px] text-zinc-300 leading-relaxed">
-                        <span className="text-zinc-500 font-mono text-[11px] mr-2">system.{activity.action}</span>
-                        {activity.details || "Processing systemic event..."}
-                      </p>
-                      <div className="flex items-center gap-2 mt-1">
-                        {activity.projects?.title && (
-                          <span className="text-[11px] text-zinc-500">@ {activity.projects.title}</span>
+                    <div key={activity.id} className="flex gap-3 relative">
+                      <div className="absolute left-[-23px] top-[4px] h-3 w-3 rounded-full bg-black border border-white/20 flex items-center justify-center overflow-hidden z-10">
+                        {activity.profiles?.avatar_url ? (
+                          <img src={activity.profiles.avatar_url} className="h-full w-full object-cover" />
+                        ) : (
+                          <span className="text-[7px] text-white font-bold">{activity.profiles?.full_name?.charAt(0) || "U"}</span>
                         )}
-                        <span className="text-[11px] text-zinc-600 font-mono">
-                          {new Date(activity.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
-                        </span>
+                      </div>
+                      <div>
+                        <p className="text-[13px] text-zinc-300 leading-relaxed">
+                          <span className="text-zinc-200 font-medium mr-2">{activity.profiles?.full_name || "System"}</span>
+                          <span className="text-zinc-500 font-mono text-[11px] mr-2">.{activity.action}</span>
+                          {activity.details || "Processing systemic event..."}
+                        </p>
+                        <div className="flex items-center gap-2 mt-1">
+                          {activity.projects?.title && (
+                            <span className="text-[11px] text-zinc-500">@ {activity.projects.title}</span>
+                          )}
+                          <span className="text-[11px] text-zinc-600 font-mono">
+                            {new Date(activity.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
                 ))}
               </div>
             )}
