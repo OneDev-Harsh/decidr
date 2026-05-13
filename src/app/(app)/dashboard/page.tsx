@@ -16,12 +16,14 @@ import {
   BarChart3,
   Loader2
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function DashboardPage() {
   const [user, setUser] = useState<any>(null);
   const [recentProjects, setRecentProjects] = useState<any[]>([]);
   const [activities, setActivities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showAllActivities, setShowAllActivities] = useState(false);
 
   useEffect(() => {
     async function loadDashboard() {
@@ -51,7 +53,7 @@ export default function DashboardPage() {
         .from('project_activity')
         .select('*, projects(title), profiles(full_name, avatar_url, username)')
         .order('created_at', { ascending: false })
-        .limit(10);
+        .limit(20);
       
       if (activityData) {
         setActivities(activityData);
@@ -61,6 +63,8 @@ export default function DashboardPage() {
     }
     loadDashboard();
   }, []);
+
+  const displayedActivities = showAllActivities ? activities : activities.slice(0, 3);
 
   if (loading) {
     return (
@@ -164,43 +168,128 @@ export default function DashboardPage() {
             <h2 className="text-[15px] font-medium text-white">Activity Log</h2>
           </div>
 
-          <div className="bg-[#0a0a0a] border border-white/10 rounded-lg p-5">
+          <div className="bg-[#0a0a0a] border border-white/10 rounded-lg overflow-hidden">
             {activities.length === 0 ? (
-              <p className="text-zinc-500 text-[13px] text-center py-4">Awaiting system events...</p>
+              <p className="text-zinc-500 text-[13px] text-center py-12">Awaiting system events...</p>
             ) : (
-              <div className="space-y-6 relative before:absolute before:left-1.5 before:top-2 before:bottom-2 before:w-px before:bg-white/10">
-                {activities.map((activity) => (
-                    <div key={activity.id} className="flex gap-3 relative">
-                      <div className="absolute left-[-23px] top-[4px] h-3 w-3 rounded-full bg-black border border-white/20 flex items-center justify-center overflow-hidden z-10">
-                        {activity.profiles?.avatar_url ? (
-                          <img src={activity.profiles.avatar_url} className="h-full w-full object-cover" />
-                        ) : (
-                          <span className="text-[7px] text-white font-bold">{activity.profiles?.full_name?.charAt(0) || "U"}</span>
-                        )}
-                      </div>
-                      <div>
-                        <p className="text-[13px] text-zinc-300 leading-relaxed">
-                          <span className="text-zinc-200 font-medium mr-2">{activity.profiles?.full_name || "System"}</span>
-                          <span className="text-zinc-500 font-mono text-[11px] mr-2">.{activity.action}</span>
-                          {activity.details || "Processing systemic event..."}
-                        </p>
-                        <div className="flex items-center gap-2 mt-1">
-                          {activity.projects?.title && (
-                            <span className="text-[11px] text-zinc-500">@ {activity.projects.title}</span>
-                          )}
-                          <span className="text-[11px] text-zinc-600 font-mono">
-                            {new Date(activity.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
-                          </span>
-                        </div>
+              <div className="divide-y divide-white/[0.05]">
+                {activities.slice(0, 3).map((activity) => (
+                  <div key={activity.id} className="p-3.5 hover:bg-white/[0.02] transition-colors group cursor-default">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-[13px] text-zinc-300 leading-snug">
+                        <span className="text-brand-crimson/80 font-medium capitalize">
+                          {activity.action.split('.').pop()?.replace('_', ' ')}
+                        </span>
+                        <span className="text-zinc-500 mx-1.5">by</span>
+                        <span className="text-zinc-400 font-medium">
+                          @{activity.profiles?.username || activity.profiles?.full_name?.split(' ')[0]?.toLowerCase() || "system"}
+                        </span>
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] text-zinc-600 truncate mr-4">
+                          {activity.projects?.title || "Global Protocol"}
+                        </span>
+                        <span className="text-[10px] text-zinc-700 font-mono shrink-0">
+                          {new Date(activity.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+                        </span>
                       </div>
                     </div>
+                  </div>
                 ))}
+                {activities.length > 3 && (
+                  <button 
+                    onClick={() => setShowAllActivities(true)}
+                    className="w-full py-3 text-[11px] font-semibold text-zinc-500 hover:text-white hover:bg-white/[0.03] transition-all uppercase tracking-widest border-t border-white/[0.05]"
+                  >
+                    View Strategic History
+                  </button>
+                )}
               </div>
             )}
           </div>
         </div>
-
       </div>
+
+      {/* Full Activity Modal */}
+      <AnimatePresence>
+        {showAllActivities && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowAllActivities(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-2xl max-h-[85vh] bg-[#0a0a0a] border border-white/10 rounded-xl shadow-2xl z-[101] overflow-hidden flex flex-col"
+            >
+              <div className="p-6 border-b border-white/10 flex items-center justify-between bg-black/40">
+                <div>
+                  <h2 className="text-lg font-semibold text-white tracking-tight">System Audit Log</h2>
+                  <p className="text-[13px] text-zinc-500">Comprehensive history of all decision vector modifications.</p>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setShowAllActivities(false)}
+                  className="text-zinc-500 hover:text-white hover:bg-white/5 h-8 w-8 p-0"
+                >
+                  <Plus className="h-4 w-4 rotate-45" />
+                </Button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                {activities.map((activity) => (
+                  <div key={activity.id} className="flex gap-4 group">
+                    <div className="h-9 w-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 overflow-hidden">
+                      {activity.profiles?.avatar_url ? (
+                        <img src={activity.profiles.avatar_url} className="h-full w-full object-cover" />
+                      ) : (
+                        <span className="text-[11px] text-zinc-500 font-medium">
+                          {(activity.profiles?.full_name || activity.profiles?.username || "S").charAt(0).toUpperCase()}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center gap-2">
+                          <p className="text-[14px] text-white font-medium uppercase tracking-wider text-brand-crimson/90">
+                            {activity.action.split('.').pop()?.replace('_', ' ')}
+                          </p>
+                          <span className="text-[12px] text-zinc-500 font-medium">
+                            @{activity.profiles?.username || activity.profiles?.full_name?.split(' ')[0]?.toLowerCase() || "system"}
+                          </span>
+                        </div>
+                        <span className="text-[11px] text-zinc-600 font-mono">
+                          {new Date(activity.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                        </span>
+                      </div>
+                      <p className="text-[13px] text-zinc-400 mb-2">
+                        {activity.details}
+                      </p>
+                      {activity.projects?.title && (
+                        <Link 
+                          href={`/projects/${activity.project_id}`}
+                          className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[11px] text-zinc-500 hover:text-white hover:bg-white/10 transition-all"
+                        >
+                          <Activity className="h-3 w-3" />
+                          {activity.projects.title}
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="p-4 border-t border-white/10 bg-black/20 text-center">
+                <p className="text-[11px] text-zinc-600 uppercase tracking-widest font-medium">End of Audit Trail</p>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

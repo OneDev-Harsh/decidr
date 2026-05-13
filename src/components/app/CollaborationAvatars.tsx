@@ -75,7 +75,7 @@ export function CollaborationAvatars({ channel }: CollaborationAvatarsProps) {
                 user.full_name.charAt(0).toUpperCase()
               )}
             </div>
-            <div className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-emerald-500 border border-black" />
+            <div className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-zinc-100 border border-black" />
           </motion.div>
         ))}
       </AnimatePresence>

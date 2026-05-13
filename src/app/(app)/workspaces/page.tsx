@@ -13,6 +13,9 @@ export default function WorkspacesPage() {
 
   useEffect(() => {
     async function loadWorkspaces() {
+      // 1. Wait for auth to be ready
+      await insforge.auth.getCurrentUser();
+
       const { data } = await insforge.database
         .from('workspaces')
         .select('*')

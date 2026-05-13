@@ -12,6 +12,9 @@ Return your response as a JSON object:
   "description": "One-sentence overview",
   "problem_statement": "The core dilemma or question",
   "goals": "Bullet points of objectives and constraints",
+  "strategic_drivers": "Key external/internal forces pushing this decision",
+  "key_assumptions": "What is being taken for granted",
+  "success_criteria": "How will we know if the decision was correct",
   "status": "ACTIVE",
   "priority": "medium"
 }

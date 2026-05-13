@@ -98,10 +98,10 @@ export const BlindspotAnalysis = memo(function BlindspotAnalysis({ project, onAn
                 <div className="flex flex-col md:flex-row">
                   <div className="p-8 md:w-1/2 border-b md:border-b-0 md:border-r border-white/5">
                     <div className="flex items-center gap-3 mb-4">
-                      <span className={`text-[10px] font-medium uppercase tracking-widest px-2 py-0.5 rounded border ${
-                        spot.impact === 'High' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
-                        spot.impact === 'Medium' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
-                        'bg-zinc-500/10 text-zinc-400 border-zinc-500/20'
+                      <span className={`text-[10px] font-bold uppercase tracking-[0.2em] px-2 py-0.5 rounded border ${
+                        spot.impact === 'High' ? 'bg-zinc-100 text-black border-zinc-100' :
+                        spot.impact === 'Medium' ? 'bg-zinc-800 text-zinc-400 border-zinc-700' :
+                        'bg-zinc-900 text-zinc-600 border-zinc-800'
                       }`}>
                         {spot.impact}
                       </span>
@@ -120,8 +120,8 @@ export const BlindspotAnalysis = memo(function BlindspotAnalysis({ project, onAn
                         <CheckCircle2 className="h-3.5 w-3.5 text-zinc-500" />
                         <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest">Recommended Mitigation</span>
                       </div>
-                      <p className="text-zinc-300 text-[14px] leading-relaxed italic font-light">
-                        &ldquo;{spot.mitigation}&rdquo;
+                      <p className="text-zinc-300 text-[14px] leading-relaxed font-light">
+                        {spot.mitigation}
                       </p>
                     </div>
                     {spot.evidenceNeeded && (

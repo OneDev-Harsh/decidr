@@ -118,18 +118,18 @@ export const ScenarioMatrix = memo(function ScenarioMatrix({ project, onAnalysis
                 <div className="bg-[#0a0a0a] border border-white/10 rounded-xl h-full flex flex-col group relative overflow-hidden hover:border-white/20 transition-all">
                   <div className="p-6 flex-1 flex flex-col">
                     <div className="flex items-center justify-between gap-2 mb-4">
-                      <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-medium border ${
-                        scenario.riskLevel === 'High' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
-                        scenario.riskLevel === 'Medium' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
-                        'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                      <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest border ${
+                        scenario.riskLevel === 'High' ? 'bg-zinc-900 text-zinc-300 border-zinc-700' :
+                        scenario.riskLevel === 'Medium' ? 'bg-zinc-900 text-zinc-400 border-zinc-800' :
+                        'bg-zinc-900 text-zinc-500 border-zinc-900'
                       }`}>
                         {scenario.riskLevel} Risk
                       </span>
                       {scenario.probability !== undefined && (
                         <div className="flex items-center gap-2">
                           <span className="text-[10px] font-medium text-zinc-500 font-mono">{scenario.probability}%</span>
-                          <div className="w-12 h-1 bg-white/5 rounded-full overflow-hidden">
-                            <div className="h-full bg-zinc-400" style={{ width: `${scenario.probability}%` }} />
+                          <div className="w-12 h-1 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800">
+                            <div className="h-full bg-zinc-100" style={{ width: `${scenario.probability}%` }} />
                           </div>
                         </div>
                       )}
@@ -193,8 +193,8 @@ export const ScenarioMatrix = memo(function ScenarioMatrix({ project, onAnalysis
                                 <span className="text-zinc-500 capitalize">{key.replace('_', ' ')}</span>
                                 <span className="text-white font-mono">{value}/10</span>
                               </div>
-                              <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                                <div className="h-full bg-zinc-500 rounded-full" style={{ width: `${value * 10}%` }} />
+                              <div className="h-1 w-full bg-zinc-900 rounded-full overflow-hidden border border-zinc-800">
+                                <div className="h-full bg-zinc-400 rounded-full" style={{ width: `${value * 10}%` }} />
                               </div>
                             </div>
                           ))}

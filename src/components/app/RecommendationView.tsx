@@ -140,8 +140,8 @@ export const RecommendationView = memo(function RecommendationView({ project, on
                     <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-widest">Verified Strategy</span>
                   </div>
                   {projectStatus === 'DECIDED' ? (
-                    <span className="text-[11px] font-medium text-emerald-400 uppercase tracking-widest">
-                      Decision Committed
+                    <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                      <CheckCircle className="h-3 w-3" /> Decision Committed
                     </span>
                   ) : (
                     <Button
@@ -157,7 +157,7 @@ export const RecommendationView = memo(function RecommendationView({ project, on
                   {recommendation!.recommendation}
                 </h2>
                 
-                <p className="text-[16px] text-zinc-400 leading-relaxed font-light italic border-l border-white/10 pl-6">
+                <p className="text-[16px] text-zinc-400 leading-relaxed font-light italic">
                   {recommendation!.rationale}
                 </p>
               </div>
@@ -190,10 +190,10 @@ export const RecommendationView = memo(function RecommendationView({ project, on
                 <span className="text-[42px] font-bold text-white leading-none">
                   {confidenceData?.overallScore ?? recommendation!.confidenceScore}%
                 </span>
-                <span className={`text-[10px] font-medium uppercase tracking-widest px-1.5 py-0.5 rounded border ${
-                  confidenceData?.grade === 'HIGH' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
-                  confidenceData?.grade === 'MODERATE' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
-                  'bg-red-500/10 text-red-400 border-red-500/20'
+                <span className={`text-[10px] font-bold uppercase tracking-[0.2em] px-2 py-0.5 rounded border ${
+                  confidenceData?.grade === 'HIGH' ? 'bg-zinc-100 text-black border-zinc-100' :
+                  confidenceData?.grade === 'MODERATE' ? 'bg-zinc-800 text-zinc-400 border-zinc-700' :
+                  'bg-zinc-900 text-zinc-500 border-zinc-800'
                 }`}>
                   {confidenceData?.grade}
                 </span>
@@ -208,10 +208,10 @@ export const RecommendationView = memo(function RecommendationView({ project, on
                     </div>
                     <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
                       <div
-                        className={`h-full rounded-full transition-all duration-500 ${
-                          factor.score >= 70 ? 'bg-emerald-500' :
-                          factor.score >= 40 ? 'bg-zinc-500' :
-                          'bg-zinc-700'
+                        className={`h-full rounded-full transition-all duration-700 ${
+                          factor.score >= 70 ? 'bg-zinc-100' :
+                          factor.score >= 40 ? 'bg-zinc-600' :
+                          'bg-zinc-800'
                         }`}
                         style={{ width: `${factor.score}%` }}
                       />

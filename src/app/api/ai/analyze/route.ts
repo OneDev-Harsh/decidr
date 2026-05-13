@@ -99,8 +99,12 @@ export async function POST(req: Request) {
 
     const insforge = createClient({
       baseUrl: process.env.NEXT_PUBLIC_INSFORGE_URL!,
-      anonKey: token || process.env.NEXT_PUBLIC_INSFORGE_ANON_KEY!
+      anonKey: process.env.NEXT_PUBLIC_INSFORGE_ANON_KEY!
     });
+
+    if (token) {
+      insforge.setAccessToken(token);
+    }
 
     // ── Input Validation ────────────────────────────────────
     let body: { project?: any; evidenceList?: any[]; action?: string };

@@ -24,6 +24,9 @@ export default function WorkspacePage() {
 
   useEffect(() => {
     async function loadWorkspace() {
+      // 1. Wait for auth to be ready (prevents race condition on reload)
+      await insforge.auth.getCurrentUser();
+
       // Fetch Workspace Details
       const { data: wsData, error: wsError } = await insforge.database
         .from('workspaces')
@@ -32,7 +35,12 @@ export default function WorkspacePage() {
         .single();
         
       if (wsError || !wsData) {
-        router.push("/dashboard");
+        console.error("Workspace load error:", wsError);
+        // Only redirect if it's clearly a "Not Found" or "Unauthorized" after auth is ready
+        if (!wsData || wsError?.status === 404 || wsError?.code === 'PGRST116') {
+          router.push("/dashboard");
+        }
+        setLoading(false);
         return;
       }
       setWorkspace(wsData);
