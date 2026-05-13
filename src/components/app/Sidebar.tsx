@@ -16,6 +16,7 @@ import {
   Menu,
   Search
 } from "lucide-react";
+import { Logo } from "@/components/shared/Logo";
 import { Button } from "@/components/ui/button";
 import { NotificationCenter } from "./NotificationCenter";
 
@@ -98,11 +99,8 @@ export function Sidebar() {
               exit={{ opacity: 0 }}
               className="flex items-center gap-2"
             >
-              <Link href="/dashboard" className="flex items-center gap-2.5">
-                <div className="h-6 w-6 rounded-md bg-white flex items-center justify-center shrink-0">
-                  <span className="text-black font-bold text-xs">D</span>
-                </div>
-                <span className="text-[15px] font-semibold text-white">Decidr</span>
+              <Link href="/dashboard">
+                <Logo size="sm" />
               </Link>
             </motion.div>
           ) : (
@@ -113,9 +111,9 @@ export function Sidebar() {
               exit={{ opacity: 0 }}
               className="mx-auto"
             >
-              <div className="h-6 w-6 rounded-md bg-white flex items-center justify-center">
-                <span className="text-black font-bold text-xs">D</span>
-              </div>
+              <Link href="/dashboard">
+                <Logo iconOnly size="sm" />
+              </Link>
             </motion.div>
           )}
         </AnimatePresence>

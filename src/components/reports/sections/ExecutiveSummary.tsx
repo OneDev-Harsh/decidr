@@ -11,60 +11,90 @@ export function ExecutiveSummary({ project, recommendation }: ExecutiveSummaryPr
   if (!recommendation) return null;
 
   return (
-    <div className="p-[20mm] print:break-after-page min-h-[297mm] bg-white text-black flex flex-col">
-      <div className="mb-8 pb-4 border-b-2 border-black">
-        <h2 className="text-3xl font-black tracking-tight uppercase">Executive Summary</h2>
-        <p className="text-[12px] font-bold text-zinc-500 uppercase tracking-widest mt-2">High-Level Strategic Briefing</p>
+    <div className="p-[30mm] print:break-after-page min-h-[297mm] bg-white text-black flex flex-col relative overflow-hidden">
+      {/* Structural Background Accents */}
+      <div className="absolute top-0 right-0 w-[40%] h-[1px] bg-zinc-100" />
+      
+      {/* Editorial Header */}
+      <div className="mb-20">
+        <div className="flex items-center gap-3 mb-5">
+          <div className="h-1 w-10 bg-black" />
+          <span className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-[0.3em]">Section 01 — Strategic Synthesis</span>
+        </div>
+        <h2 className="text-4xl font-extrabold tracking-tight uppercase mb-3">Executive Summary</h2>
+        <p className="text-[12px] font-bold text-zinc-500 uppercase tracking-widest">Condensed Intelligence & Actionable Verdict</p>
       </div>
 
-      <div className="flex-1 space-y-12">
-        {/* Objective */}
-        <section>
-          <div className="flex items-center gap-2 mb-4 text-black">
-            <Target className="h-5 w-5" />
-            <h3 className="text-sm font-bold uppercase tracking-widest">Decision Objective</h3>
+      <div className="flex-1 space-y-24">
+        {/* The "Anchor" Problem Statement - Minimalist & Powerful */}
+        <section className="space-y-6">
+          <div className="flex items-center gap-2">
+            <Target className="h-3.5 w-3.5 text-zinc-400" />
+            <span className="text-[9px] font-mono font-bold text-zinc-400 uppercase tracking-[0.2em]">Decision Objective</span>
           </div>
-          <p className="text-lg leading-relaxed text-zinc-800 font-serif border-l-4 border-black pl-6">
-            {project.problem_statement || "Objective not explicitly defined."}
+          <p className="text-[24px] font-semibold tracking-tight text-zinc-800 leading-snug max-w-[90%]">
+            {project.problem_statement || "Strategic objective pending formal definition."}
           </p>
         </section>
 
-        {/* Final Recommendation */}
-        <section className="bg-zinc-50 p-8 border border-zinc-200">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-2 text-black">
-              <CheckCircle className="h-5 w-5" />
-              <h3 className="text-sm font-bold uppercase tracking-widest">Strategic Recommendation</h3>
+        {/* Primary Intelligence Vector: The Recommendation - Tactical Emphasis */}
+        <section className="space-y-8">
+          <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-3.5 w-3.5 text-black" />
+              <span className="text-[9px] font-mono font-bold text-black uppercase tracking-[0.2em]">Strategic Recommendation</span>
             </div>
-            <div className="px-3 py-1 bg-black text-white text-[10px] font-bold uppercase tracking-widest">
-              Confidence: {recommendation.confidenceScore}%
+            <div className="px-3 py-1 bg-zinc-50 border border-zinc-200 rounded-sm">
+              <span className="text-[9px] font-mono font-bold text-black uppercase tracking-widest">Confidence Index: {recommendation.confidenceScore}%</span>
             </div>
           </div>
-          <h4 className="text-2xl font-bold leading-tight mb-4 text-black">
-            {recommendation.recommendation}
-          </h4>
-          <p className="text-base text-zinc-600 leading-relaxed">
-            {recommendation.rationale}
-          </p>
+
+          <div className="space-y-10">
+            <h3 className="text-[32px] font-extrabold leading-tight tracking-tighter text-black uppercase">
+              {recommendation.recommendation}
+            </h3>
+            
+            <div className="p-10 bg-zinc-50/50 border border-zinc-100 rounded-sm">
+              <span className="text-[9px] font-mono font-bold text-zinc-400 uppercase tracking-widest block mb-4">Strategic Rationale</span>
+              <p className="text-[16px] text-zinc-700 leading-relaxed font-medium tracking-tight">
+                {recommendation.rationale}
+              </p>
+            </div>
+          </div>
         </section>
 
-        {/* Top Risks */}
+        {/* Tactical Indicators: Risks - Modular Grouping */}
         {recommendation.keyRisks && recommendation.keyRisks.length > 0 && (
-          <section>
-            <div className="flex items-center gap-2 mb-4 text-red-700">
-              <AlertTriangle className="h-5 w-5" />
-              <h3 className="text-sm font-bold uppercase tracking-widest">Primary Strategic Risks</h3>
+          <section className="space-y-8">
+            <div className="flex items-center gap-2 border-b border-zinc-100 pb-3">
+              <AlertTriangle className="h-3.5 w-3.5 text-brand-crimson" />
+              <span className="text-[9px] font-mono font-bold text-zinc-500 uppercase tracking-[0.2em]">Primary Risk Vectors</span>
             </div>
-            <ul className="space-y-3">
-              {recommendation.keyRisks.slice(0, 3).map((risk: string, i: number) => (
-                <li key={i} className="flex items-start gap-4 p-4 bg-red-50/50 border border-red-100">
-                  <span className="text-[10px] font-bold text-red-500 uppercase tracking-widest mt-1 shrink-0">Risk 0{i+1}</span>
-                  <p className="text-sm text-zinc-800 leading-relaxed">{risk}</p>
-                </li>
+            
+            <div className="grid grid-cols-2 gap-px bg-zinc-100 border border-zinc-100">
+              {recommendation.keyRisks.slice(0, 4).map((risk: string, i: number) => (
+                <div key={i} className="p-8 bg-white space-y-3 hover:bg-zinc-50 transition-colors">
+                  <span className="text-[9px] font-mono font-bold text-zinc-300 uppercase tracking-widest">Risk Profile 0{i+1}</span>
+                  <p className="text-[14px] text-zinc-700 leading-relaxed font-medium">
+                    {risk}
+                  </p>
+                </div>
               ))}
-            </ul>
+            </div>
           </section>
         )}
+      </div>
+
+      {/* Page Signature */}
+      <div className="pt-12 mt-12 border-t border-zinc-100 flex justify-between items-end opacity-40">
+        <div className="flex flex-col gap-1">
+          <span className="text-[8px] font-mono font-bold uppercase tracking-widest">Decidr Intelligence Synthesis</span>
+          <span className="text-[7px] font-mono font-bold">AUDIT_STAMP: {project.id.split('-')[0].toUpperCase()}_EXEC_01</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="h-1.5 w-1.5 rounded-full bg-zinc-200" />
+          <span className="text-[8px] font-mono font-bold uppercase tracking-[0.2em]">Verified Secure</span>
+        </div>
       </div>
     </div>
   );

@@ -27,70 +27,87 @@ export function AuditAppendix({ project, evidenceList, proposals }: AuditAppendi
       date: p.created_at,
       action: "Strategic Proposal Submitted",
       actor: "Human Operator",
-      detail: `Proposal ID: PRP-${p.id.split('-')[0]}. Status: ${p.status}.`
+      detail: `Proposal ID: PRP-${p.id.split('-')[0].toUpperCase()}. Status: ${p.status}.`
     }))
   ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   return (
-    <div className="p-[20mm] print:break-after-page min-h-[297mm] bg-white text-black">
-      <div className="mb-8 pb-4 border-b-2 border-black flex justify-between items-end">
-        <div>
-          <h2 className="text-3xl font-black tracking-tight uppercase">Audit Appendix</h2>
-          <p className="text-[12px] font-bold text-zinc-500 uppercase tracking-widest mt-2">Compliance Lineage & System Traces</p>
+    <div className="p-[30mm] print:break-after-page min-h-[297mm] bg-white text-black">
+      
+      {/* Editorial Header */}
+      <div className="mb-16 flex justify-between items-start">
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="h-1 w-12 bg-black" />
+            <span className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-[0.3em]">Final Stage — Technical Appendix</span>
+          </div>
+          <h2 className="text-4xl font-black tracking-tight uppercase mb-2 font-serif">Audit & Lineage</h2>
+          <p className="text-[12px] font-bold text-zinc-500 uppercase tracking-widest">Compliance Lifecycle & System Traces</p>
         </div>
-        <div className="px-3 py-1 border border-black text-[10px] font-bold uppercase tracking-widest">
-          Classified Record
+        <div className="px-4 py-2 border-2 border-black text-[10px] font-black uppercase tracking-[0.2em] bg-black text-white">
+          Certified Record
         </div>
       </div>
 
-      <div className="mt-12 space-y-12">
+      <div className="space-y-20">
         {/* System Trace Integrity */}
-        <section>
-          <h3 className="text-sm font-bold uppercase tracking-widest mb-6 border-b border-zinc-200 pb-2">System Integrity Trace</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-zinc-50 border border-zinc-200">
-              <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">Intelligence Engine</span>
-              <span className="text-sm font-mono text-black">Decidr AI v2.4 (O3-Mini)</span>
-            </div>
-            <div className="p-4 bg-zinc-50 border border-zinc-200">
-              <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">Database Shard</span>
-              <span className="text-sm font-mono text-black">us-east-1-secure</span>
-            </div>
-            <div className="p-4 bg-zinc-50 border border-zinc-200">
-              <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">Verification Hash</span>
-              <span className="text-xs font-mono text-zinc-600 truncate block">{project.id}-hash-verified</span>
-            </div>
-            <div className="p-4 bg-zinc-50 border border-zinc-200">
-              <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">Export Timestamp</span>
-              <span className="text-sm font-mono text-black">{new Date().toISOString()}</span>
-            </div>
+        <section className="space-y-8">
+          <div className="flex items-center gap-2 border-b border-zinc-100 pb-3">
+            <div className="h-1.5 w-1.5 bg-black rounded-full" />
+            <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Intelligence Infrastructure Trace</span>
+          </div>
+          <div className="grid grid-cols-2 gap-px bg-zinc-100 border border-zinc-100">
+            {[
+              { label: "Intelligence Engine", value: "Decidr AI v2.4 (O3-Mini)" },
+              { label: "Database Shard", value: "us-east-1-secure" },
+              { label: "Verification Hash", value: `${project.id.toUpperCase()}-VERIFIED`, mono: true },
+              { label: "Export Timestamp", value: new Date().toISOString(), mono: true }
+            ].map((item, i) => (
+              <div key={i} className="p-8 bg-white space-y-2">
+                <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest block">{item.label}</span>
+                <span className={`text-[13px] font-bold text-black ${item.mono ? 'font-mono uppercase tracking-tight' : ''}`}>{item.value}</span>
+              </div>
+            ))}
           </div>
         </section>
 
         {/* Timeline Log */}
-        <section>
-          <h3 className="text-sm font-bold uppercase tracking-widest mb-6 border-b border-zinc-200 pb-2 flex items-center gap-2">
-            <Activity className="h-4 w-4" /> Immutable Operational Log
-          </h3>
-          <div className="space-y-0 border border-zinc-200">
+        <section className="space-y-8">
+          <div className="flex items-center gap-2 border-b border-zinc-100 pb-3">
+            <Activity className="h-3.5 w-3.5 text-black" />
+            <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Immutable Operational Lifecycle</span>
+          </div>
+          <div className="border border-zinc-100 divide-y divide-zinc-100">
             {timelineEvents.map((event, i) => (
-              <div key={i} className={`flex text-sm border-b border-zinc-200 ${i % 2 === 0 ? 'bg-zinc-50' : 'bg-white'}`}>
-                <div className="w-48 p-3 font-mono text-[10px] text-zinc-500 border-r border-zinc-200 shrink-0 flex items-center">
-                  {new Date(event.date).toLocaleString()}
+              <div key={i} className="flex group hover:bg-zinc-50/50 transition-colors">
+                <div className="w-56 p-6 font-mono text-[9px] font-bold text-zinc-300 border-r border-zinc-100 shrink-0 group-hover:text-black transition-colors">
+                  {new Date(event.date).toLocaleString('en-US', { 
+                    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false 
+                  })}
                 </div>
-                <div className="w-48 p-3 font-bold text-[11px] uppercase tracking-widest border-r border-zinc-200 shrink-0 flex items-center text-black">
-                  {event.action}
+                <div className="w-64 p-6 border-r border-zinc-100 shrink-0">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-black block mb-1">{event.action}</span>
+                  <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-[0.2em]">{event.actor}</span>
                 </div>
-                <div className="flex-1 p-3 text-zinc-700 text-[12px] flex items-center">
-                  <span className="font-bold mr-2">{event.actor}:</span> {event.detail}
+                <div className="flex-1 p-6 text-zinc-600 text-[13px] leading-relaxed font-serif italic">
+                  {event.detail}
                 </div>
               </div>
             ))}
           </div>
         </section>
 
-        <div className="pt-12 text-center text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
-          --- End of Report ---
+        {/* Completion Signature */}
+        <div className="pt-20 text-center space-y-6">
+          <div className="flex justify-center items-center gap-4">
+            <div className="h-px w-24 bg-zinc-100" />
+            <span className="text-[10px] font-black text-zinc-300 uppercase tracking-[0.5em]">End of Strategic Briefing</span>
+            <div className="h-px w-24 bg-zinc-100" />
+          </div>
+          <div className="flex flex-col gap-2 opacity-30">
+            <span className="text-[8px] font-bold uppercase tracking-widest">Document Integrity Verified</span>
+            <span className="text-[7px] font-mono uppercase tracking-widest">System Hash: {Buffer.from(project.id).toString('base64').slice(0, 32)}</span>
+          </div>
         </div>
       </div>
     </div>

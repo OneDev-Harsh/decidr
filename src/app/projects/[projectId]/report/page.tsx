@@ -37,6 +37,23 @@ export default function ReportPage() {
       try {
         setLoading(true);
         
+        // Step 0: Try to get existing user/session from the SDK first
+        const { data: userData } = await insforge.auth.getCurrentUser();
+        
+        if (!userData?.user) {
+          // Fallback: Manually restore from cookie if SDK didn't pick it up automatically
+          const cookies = document.cookie.split(';').map(c => c.trim());
+          const tokenCookie = cookies.find(row => row.startsWith('insforge-auth-token='));
+          
+          if (tokenCookie) {
+            const rawToken = tokenCookie.substring(tokenCookie.indexOf('=') + 1);
+            const cleanToken = decodeURIComponent(rawToken).trim();
+            if (cleanToken) {
+              insforge.setAccessToken(cleanToken);
+            }
+          }
+        }
+
         // Step 1: Fetch Project + Workspace
         const { data: project, error: projError } = await insforge.database
           .from('projects')
@@ -45,7 +62,7 @@ export default function ReportPage() {
           .single();
 
         if (projError || !project) {
-          throw new Error(projError?.message || "Project not found");
+          throw new Error(projError?.message || `Project [${projectId}] not found or access denied.`);
         }
 
         // Step 2: Fetch Evidence
@@ -119,33 +136,57 @@ export default function ReportPage() {
       headerTitle={`${project.title} — Strategic Brief`}
       classification="RESTRICTED / INTERNAL ONLY"
     >
-      <CoverPage project={project} reportType={reportType} />
+      <div className="print:print-break-after">
+        <CoverPage project={project} reportType={reportType} />
+      </div>
       
       {(reportType === "executive" || reportType === "full" || reportType === "governance") && (
-        <ExecutiveSummary project={project} recommendation={recommendation} />
+        <div className="print:print-break-after">
+          <ExecutiveSummary project={project} recommendation={recommendation} />
+        </div>
       )}
 
       {reportType === "full" && (
         <>
-          <StrategicContext project={project} />
-          <EvidenceSummary evidenceList={evidenceList} />
-          <Contradictions contradictions={contradictions} />
-          <Scenarios scenarios={scenarios} />
-          <FinalRecommendation project={project} recommendation={recommendation} />
-          <DebateGovernance proposals={proposals} />
-          <AuditAppendix project={project} evidenceList={evidenceList} proposals={proposals} />
+          <div className="print:print-break-after">
+            <StrategicContext project={project} />
+          </div>
+          <div className="print:print-break-after">
+            <EvidenceSummary project={project} evidenceList={evidenceList} />
+          </div>
+          <div className="print:print-break-after">
+            <Contradictions project={project} contradictions={contradictions} />
+          </div>
+          <div className="print:print-break-after">
+            <Scenarios project={project} scenarios={scenarios} />
+          </div>
+          <div className="print:print-break-after">
+            <FinalRecommendation project={project} recommendation={recommendation} />
+          </div>
+          <div className="print:print-break-after">
+            <DebateGovernance project={project} proposals={proposals} />
+          </div>
+          <div className="print:print-break-after">
+            <AuditAppendix project={project} evidenceList={evidenceList} proposals={proposals} />
+          </div>
         </>
       )}
 
       {reportType === "governance" && (
         <>
-          <DebateGovernance proposals={proposals} />
-          <AuditAppendix project={project} evidenceList={evidenceList} proposals={proposals} />
+          <div className="print:print-break-after">
+            <DebateGovernance project={project} proposals={proposals} />
+          </div>
+          <div className="print:print-break-after">
+            <AuditAppendix project={project} evidenceList={evidenceList} proposals={proposals} />
+          </div>
         </>
       )}
 
       {reportType === "scenario" && (
-        <Scenarios scenarios={scenarios} />
+        <div className="print:print-break-after">
+          <Scenarios project={project} scenarios={scenarios} />
+        </div>
       )}
     </ReportLayout>
   );

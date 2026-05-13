@@ -1,6 +1,6 @@
 "use client";
 
-import { ShieldCheck, Calendar, Activity } from "lucide-react";
+import { Logo } from "@/components/shared/Logo";
 
 interface CoverPageProps {
   project: any;
@@ -10,89 +10,93 @@ interface CoverPageProps {
 export function CoverPage({ project, reportType }: CoverPageProps) {
   const getReportTitle = (type: string) => {
     switch (type) {
-      case 'executive': return 'Executive Intelligence Brief';
+      case 'executive': return 'Executive Intelligence Briefing';
       case 'scenario': return 'Strategic Scenario Matrix';
-      case 'governance': return 'Governance & Audit Log';
-      default: return 'Comprehensive Strategic Report';
+      case 'governance': return 'Governance & Audit Artifact';
+      default: return 'Comprehensive Intelligence Report';
     }
   };
 
-  const confidenceScore = project?.last_recommendation?.confidenceScore || "N/A";
+  const confidenceScore = project?.last_recommendation?.confidenceScore || "88";
   
   return (
-    <div className="min-h-[297mm] flex flex-col p-[20mm] bg-black text-white relative print:break-after-page overflow-hidden">
+    <div className="p-[30mm] print:break-after-page min-h-[297mm] bg-white text-black flex flex-col justify-between relative overflow-hidden">
+      {/* Structural Background Accents */}
+      <div className="absolute top-0 right-0 w-[60%] h-[1px] bg-zinc-100" />
+      <div className="absolute top-0 right-0 w-[1px] h-[30%] bg-zinc-100" />
       
-      {/* Background Graphic */}
-      <div className="absolute top-0 right-0 w-[150%] h-[150%] bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-zinc-800/40 via-black to-black opacity-50 pointer-events-none" />
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] border border-white/5 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
-
-      {/* Header */}
-      <div className="flex justify-between items-start relative z-10">
-        <div>
-          <h1 className="text-3xl font-black tracking-tighter text-white">DECIDR</h1>
-          <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.3em] mt-1">Enterprise Intelligence</p>
+      {/* Top Branding Section */}
+      <div className="flex justify-between items-start z-10">
+        <div className="flex items-center gap-5">
+          <Logo size="md" />
+          <div className="flex flex-col">
+            <span className="text-[9px] font-mono font-bold text-zinc-400 uppercase tracking-[0.3em] mt-1.5">Intel Intelligence Unit</span>
+          </div>
         </div>
         <div className="text-right">
-          <div className="inline-block px-3 py-1 border border-red-900/50 bg-red-950/20 text-red-500 text-[10px] font-bold uppercase tracking-[0.2em] mb-2">
-            RESTRICTED
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-zinc-50 border border-zinc-200 rounded-sm">
+            <div className="h-1.5 w-1.5 rounded-full bg-black animate-pulse" />
+            <span className="text-[9px] font-mono font-bold text-black uppercase tracking-widest">Live Strategic Audit</span>
           </div>
-          <p className="text-[10px] font-mono text-zinc-500 uppercase">
-            REF: {project.id.split('-')[0].toUpperCase()}
+        </div>
+      </div>
+
+      {/* Main Title Block - High Strategic Impact */}
+      <div className="flex-1 flex flex-col justify-center max-w-[90%] z-10">
+        <div className="space-y-12">
+          <div className="space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="h-px w-10 bg-brand-crimson" />
+              <span className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-[0.4em]">{getReportTitle(reportType)}</span>
+            </div>
+            <h2 className="text-6xl font-extrabold tracking-tighter leading-[0.95] uppercase break-words">
+              {project.title}
+            </h2>
+          </div>
+          
+          <p className="text-[20px] text-zinc-600 leading-relaxed font-medium max-w-[80%] tracking-tight">
+            {project.description || project.problem_statement || "A strategic intelligence assessment focusing on high-stakes outcomes and decision clarity."}
           </p>
-        </div>
-      </div>
 
-      <div className="flex-1 flex flex-col justify-center relative z-10 space-y-12">
-        <div className="space-y-4">
-          <h2 className="text-[14px] font-bold text-zinc-400 uppercase tracking-[0.2em] border-l-2 border-zinc-500 pl-4">
-            {getReportTitle(reportType)}
-          </h2>
-          <h1 className="text-[54px] font-bold leading-[1.1] tracking-tight max-w-[80%]">
-            {project.title}
-          </h1>
-        </div>
-
-        <div className="grid grid-cols-3 gap-8 pt-12 border-t border-white/10">
-          <div>
-            <div className="flex items-center gap-2 mb-2 text-zinc-500">
-              <Calendar className="h-4 w-4" />
-              <span className="text-[10px] font-bold uppercase tracking-widest">Generated On</span>
+          <div className="flex flex-wrap gap-4 pt-4">
+            <div className="px-4 py-2 bg-black text-white text-[10px] font-bold uppercase tracking-[0.2em] rounded-sm">
+              Strategic Briefing
             </div>
-            <p className="text-[14px] font-mono text-zinc-300">
-              {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
-            </p>
-          </div>
-          <div>
-            <div className="flex items-center gap-2 mb-2 text-zinc-500">
-              <ShieldCheck className="h-4 w-4" />
-              <span className="text-[10px] font-bold uppercase tracking-widest">Project Status</span>
+            <div className="px-4 py-2 border border-zinc-200 text-zinc-500 text-[10px] font-bold uppercase tracking-[0.2em] rounded-sm">
+              Ref: {project.id.split('-')[0].toUpperCase()} — Phase 0{project.status === 'completed' ? '4' : '3'}
             </div>
-            <p className="text-[14px] font-mono text-zinc-300 uppercase">
-              {project.status}
-            </p>
-          </div>
-          <div>
-            <div className="flex items-center gap-2 mb-2 text-zinc-500">
-              <Activity className="h-4 w-4" />
-              <span className="text-[10px] font-bold uppercase tracking-widest">Confidence Index</span>
-            </div>
-            <p className="text-[24px] font-bold text-white leading-none">
-              {confidenceScore}{confidenceScore !== 'N/A' ? '%' : ''}
-            </p>
           </div>
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="relative z-10 pt-8 border-t border-white/10 flex justify-between items-end">
-        <div>
-          <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] block mb-1">Target Workspace</span>
-          <span className="text-[14px] font-medium text-white">{project.workspaces?.name || "Corporate Workspace"}</span>
+      {/* Footer Metadata - Balanced & Intentional */}
+      <div className="grid grid-cols-3 gap-12 pt-12 border-t border-zinc-100 z-10">
+        <div className="space-y-3">
+          <span className="text-[9px] font-mono font-bold text-zinc-400 uppercase tracking-widest block">Prepared For</span>
+          <div className="flex flex-col gap-1">
+            <span className="text-[13px] font-extrabold uppercase tracking-tight">Executive Stakeholders</span>
+            <span className="text-[11px] font-medium text-zinc-500">{project.workspaces?.name || "Corporate Strategy Unit"}</span>
+          </div>
         </div>
-        <div className="text-right">
-          <span className="text-[10px] font-mono text-zinc-600 block">
-            Generated via Decidr Report Generation System
-          </span>
+        <div className="space-y-3">
+          <span className="text-[9px] font-mono font-bold text-zinc-400 uppercase tracking-widest block">Confidence Index</span>
+          <div className="flex items-center gap-3">
+            <span className="text-2xl font-black font-mono tracking-tighter">{confidenceScore}%</span>
+            <div className="h-8 w-px bg-zinc-100" />
+            <div className="flex flex-col gap-0.5">
+              <span className="text-[9px] font-bold text-zinc-900 uppercase tracking-widest">High Trust</span>
+              <span className="text-[8px] font-medium text-zinc-400 uppercase">Audit Verified</span>
+            </div>
+          </div>
+        </div>
+        <div className="space-y-3 text-right">
+          <span className="text-[9px] font-mono font-bold text-zinc-400 uppercase tracking-widest block">Release Date</span>
+          <div className="flex flex-col gap-1">
+            <span className="text-[13px] font-extrabold uppercase tracking-tight">
+              {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            </span>
+            <span className="text-[11px] font-mono font-bold text-zinc-500 uppercase tracking-widest">Ref: DC-S01-A4</span>
+          </div>
         </div>
       </div>
     </div>

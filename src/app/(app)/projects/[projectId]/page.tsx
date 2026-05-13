@@ -738,23 +738,23 @@ export default function ProjectPage() {
                 {activeTab === "timeline" && <ErrorBoundary fallbackTitle="Timeline Error"><DecisionTimeline projectId={projectId} /></ErrorBoundary>}
                 {activeTab === "contradictions" && (
                   <div className="max-w-4xl">
-                    <div className="flex items-center gap-3 mb-8">
-                      <div className="h-10 w-10 rounded-xl bg-red-500/10 flex items-center justify-center border border-red-500/20">
-                        <AlertTriangle className="h-5 w-5 text-red-500" />
+                    <div className="flex items-center gap-4 mb-10">
+                      <div className="h-12 w-12 rounded-xl bg-zinc-900 flex items-center justify-center border border-white/10 shadow-inner">
+                        <AlertTriangle className="h-5 w-5 text-zinc-100" />
                       </div>
                       <div>
-                        <h2 className="text-xl font-semibold text-white">Strategic Contradiction Audit</h2>
-                        <p className="text-[13px] text-zinc-500">Real-time analysis of logical inconsistencies across evidence, scenarios, and recommendations.</p>
+                        <h2 className="text-xl font-extrabold text-white tracking-tight uppercase">Strategic Contradiction Audit</h2>
+                        <p className="text-[14px] text-zinc-500 font-medium tracking-tight">Real-time analysis of logical inconsistencies across evidence, scenarios, and recommendations.</p>
                       </div>
                     </div>
                     
                     {contradictions.length === 0 ? (
-                      <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-12 flex flex-col items-center justify-center text-center">
-                        <div className="h-12 w-12 rounded-full bg-emerald-500/10 flex items-center justify-center mb-4">
-                          <CheckCircle2 className="h-6 w-6 text-emerald-500" />
+                      <div className="bg-zinc-950/50 border border-white/5 rounded-xl p-20 flex flex-col items-center justify-center text-center shadow-2xl">
+                        <div className="h-16 w-16 rounded-full bg-zinc-900 flex items-center justify-center mb-6 border border-white/5">
+                          <CheckCircle2 className="h-8 w-8 text-white" />
                         </div>
-                        <h3 className="text-lg font-medium text-white mb-2">No Contradictions Detected</h3>
-                        <p className="text-zinc-500 max-w-md">Your current decision framework, evidence, and scenarios are logically consistent. We will alert you if new evidence introduces conflicts.</p>
+                        <h3 className="text-xl font-extrabold text-white mb-2 uppercase tracking-tight">Zero Divergence Detected</h3>
+                        <p className="text-zinc-500 max-w-md text-[14px] font-medium tracking-tight">Your current decision framework, evidence, and scenarios are logically consistent. The system will alert you if new evidence introduces structural conflicts.</p>
                       </div>
                     ) : (
                       <ContradictionAlert contradictions={contradictions} />

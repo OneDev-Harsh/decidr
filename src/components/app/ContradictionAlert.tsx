@@ -8,27 +8,31 @@ export function ContradictionAlert({ contradictions }: { contradictions: any[] }
   return (
     <div className="mb-8 space-y-4">
       {contradictions.map((c, i) => (
-        <div key={i} className="flex items-start gap-4 p-5 rounded-xl bg-[#0a0a0a] border border-red-500/20 group hover:border-red-500/40 transition-all">
-          <div className="mt-1">
-            <AlertCircle className="h-5 w-5 text-red-500/70" />
+        <div key={i} className="flex items-start gap-5 p-6 rounded-xl bg-zinc-950 border border-white/5 group hover:border-white/10 transition-all shadow-2xl">
+          <div className="mt-1.5">
+            <div className="h-2 w-2 rounded-full bg-zinc-600 group-hover:bg-white transition-colors" />
           </div>
           <div className="flex-1">
-            <div className="flex items-center justify-between mb-2">
-              <h4 className="text-[15px] font-semibold text-white flex items-center gap-2">
-                Strategic Contradiction: {c.title}
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-[16px] font-extrabold text-white uppercase tracking-tight flex items-center gap-2">
+                {c.title}
               </h4>
-              <span className={`text-[10px] font-medium px-2 py-0.5 rounded border uppercase tracking-widest ${
-                c.severity === 'High' ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+              <div className={`px-2 py-0.5 border rounded-sm ${
+                c.severity === 'High' ? 'bg-white text-black border-white' : 'bg-zinc-900 text-zinc-400 border-white/5'
               }`}>
-                {c.severity} Criticality
-              </span>
-            </div>
-            <p className="text-[13px] text-zinc-400 leading-relaxed max-w-3xl">{c.description}</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {c.sources?.map((source: string, si: number) => (
-                <span key={si} className="text-[10px] font-medium text-zinc-600 bg-white/[0.02] px-2 py-0.5 rounded border border-white/5 uppercase tracking-tighter">
-                  Ref: {source}
+                <span className="text-[9px] font-mono font-bold uppercase tracking-widest">
+                  {c.severity} Criticality
                 </span>
+              </div>
+            </div>
+            <p className="text-[14px] text-zinc-400 leading-relaxed max-w-3xl font-medium tracking-tight">{c.description}</p>
+            
+            <div className="mt-6 pt-5 border-t border-white/[0.03] flex flex-wrap gap-3">
+              {c.sources?.map((source: string, si: number) => (
+                <div key={si} className="flex items-center gap-2 px-2.5 py-1 bg-white/[0.02] border border-white/[0.05] rounded-sm">
+                  <span className="text-[9px] font-mono font-bold text-zinc-500 uppercase tracking-widest">Source</span>
+                  <span className="text-[10px] font-mono font-bold text-zinc-300 uppercase tracking-tight">{source}</span>
+                </div>
               ))}
             </div>
           </div>

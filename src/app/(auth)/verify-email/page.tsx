@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { insforge } from "@/lib/insforge";
 import { ArrowRight, Loader2, Mail } from "lucide-react";
 import Link from "next/link";
+import { Logo } from "@/components/shared/Logo";
 
 function VerifyEmailForm() {
   const router = useRouter();
@@ -172,12 +173,9 @@ export default function VerifyEmailPage() {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md relative z-10"
       >
-        <div className="mb-8 text-center">
-          <Link href="/" className="inline-flex items-center space-x-2">
-            <div className="h-10 w-10 rounded bg-brand-maroon flex items-center justify-center">
-              <span className="text-white font-bold text-xl">D</span>
-            </div>
-            <span className="text-2xl font-bold tracking-tight text-white">Decidr</span>
+        <div className="mb-8 text-center flex justify-center">
+          <Link href="/">
+            <Logo size="lg" />
           </Link>
         </div>
 

@@ -13,50 +13,104 @@ interface ReportLayoutProps {
  * ReportLayout wraps the entire report.
  * It provides standard A4/Letter padding and `@media print` utilities.
  */
-export function ReportLayout({ children, headerTitle, classification = "CONFIDENTIAL", dateStr = new Date().toLocaleDateString() }: ReportLayoutProps) {
+export function ReportLayout({ children, headerTitle, classification = "", dateStr = new Date().toLocaleDateString() }: ReportLayoutProps) {
   return (
-    <div className="min-h-screen bg-zinc-100 text-black font-sans print:bg-white flex flex-col items-center py-8 print:py-0">
-      
+    <div className="min-h-screen bg-zinc-950 text-black font-sans print:bg-white flex flex-col items-center py-12 print:py-0 print:block selection:bg-brand-crimson/10 selection:text-brand-crimson">
+      <style jsx global>{`
+        @media print {
+          @page {
+            size: A4;
+            margin: 0;
+          }
+          html, body {
+            background: white !important;
+            background-color: white !important;
+            color: black !important;
+            height: auto !important;
+            overflow: visible !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .print-break-after {
+            page-break-after: always;
+          }
+          /* High-fidelity analytical rendering */
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+        }
+        
+        /* Unified Typography Hierarchy */
+        .report-section-label {
+          font-family: var(--font-mono);
+          font-size: 9px;
+          font-weight: 700;
+          letter-spacing: 0.25em;
+          text-transform: uppercase;
+          color: #a1a1aa; /* zinc-400 */
+        }
+
+        .report-heading-1 {
+          font-weight: 800;
+          letter-spacing: -0.04em;
+          text-transform: uppercase;
+        }
+
+        .report-body-text {
+          line-height: 1.6;
+          letter-spacing: -0.01em;
+        }
+      `}</style>
+
       {/* 
-        This is a hidden-on-screen block that only shows when printing.
-        It serves as a repeating header across print pages if supported by the browser. 
+        PREMIUM NATIVE HEADER
+        Aligns with the app's top bar/navigation feel
       */}
-      <div className="hidden print:block fixed top-0 left-0 right-0 h-16 pt-4 px-8 border-b border-zinc-200 bg-white z-50">
-        <div className="flex justify-between items-end pb-2">
-          <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">{headerTitle}</span>
-          <div className="flex gap-4">
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">{dateStr}</span>
-            <span className="text-[10px] font-bold text-red-700 uppercase tracking-widest">{classification}</span>
+      <div className="hidden print:flex fixed top-0 left-0 right-0 h-[18mm] px-[25mm] bg-white z-[100] items-end justify-between border-b border-zinc-100 pb-3">
+        <div className="flex items-center gap-4">
+          <div className="h-7 w-7 rounded bg-black flex items-center justify-center">
+            <span className="text-white font-black text-[12px]">D</span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[12px] font-bold text-black tracking-tight leading-none uppercase">Decidr Intelligence</span>
+            <span className="text-[8px] font-mono font-bold text-zinc-400 uppercase tracking-widest mt-1">Strategic Governance Artifact</span>
+          </div>
+        </div>
+        <div className="text-right">
+          <span className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-[0.2em]">{headerTitle}</span>
+        </div>
+      </div>
+
+      {/* PREMIUM NATIVE FOOTER */}
+      <div className="hidden print:flex fixed bottom-0 left-0 right-0 h-[15mm] px-[25mm] bg-white z-[100] items-start justify-between border-t border-zinc-100 pt-3">
+        <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-[0.2em]">© {new Date().getFullYear()} Decidr Platform — Proprietary Record</span>
+        <div className="flex items-center gap-8">
+          <span className="text-[9px] font-mono font-bold text-zinc-400 uppercase tracking-widest">{dateStr}</span>
+          <div className="flex items-center gap-2">
+            <span className="text-[9px] font-mono font-bold text-zinc-300 uppercase">Page</span>
+            <span className="text-[10px] font-black text-black font-mono tracking-tighter">[01]</span>
           </div>
         </div>
       </div>
 
-      <div className="hidden print:block fixed bottom-0 left-0 right-0 h-12 pb-4 px-8 bg-white z-50">
-        <div className="flex justify-between items-start pt-2 border-t border-zinc-200">
-          <span className="text-[9px] font-medium text-zinc-400 uppercase tracking-widest">Generated by Decidr Enterprise</span>
-          <span className="text-[9px] font-medium text-zinc-400 uppercase tracking-widest">Page <span className="pageNumber"></span></span>
-        </div>
-      </div>
-
-      {/* Main Document Body */}
-      <div className="w-full max-w-[850px] bg-white shadow-2xl print:shadow-none print:max-w-none print:w-full">
+      {/* Main Document Body - Disciplined spatial architecture */}
+      <div className="w-full max-w-[850px] bg-white shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] print:shadow-none print:max-w-none print:w-full relative z-10">
         {children}
       </div>
 
-      {/* Print Instructions Banner (visible only on screen) */}
-      <div className="fixed bottom-0 left-0 right-0 bg-zinc-900 text-white p-4 print:hidden flex items-center justify-between z-50">
-        <div className="max-w-[850px] mx-auto w-full flex items-center justify-between">
-          <div>
-            <h4 className="text-[13px] font-bold uppercase tracking-widest mb-1">Print Mode Active</h4>
-            <p className="text-[12px] text-zinc-400">Use Ctrl+P or Cmd+P to save as PDF. Ensure "Background Graphics" is enabled.</p>
+      {/* Print Trigger (Screen Only) */}
+      <div className="fixed bottom-10 right-10 print:hidden z-50">
+        <button 
+          onClick={() => window.print()}
+          className="group relative flex items-center gap-4 bg-zinc-900 text-white px-8 py-5 rounded-lg border border-white/10 shadow-2xl hover:bg-white hover:text-black transition-all duration-500 active:scale-95"
+        >
+          <div className="flex flex-col items-start">
+            <span className="text-[12px] font-bold uppercase tracking-[0.2em] leading-none mb-1">Export PDF</span>
+            <span className="text-[10px] text-zinc-500 group-hover:text-zinc-400 font-mono tracking-tight transition-colors">Enterprise Intel Export</span>
           </div>
-          <button 
-            onClick={() => window.print()}
-            className="bg-white text-black px-6 py-2 rounded-md text-[13px] font-bold shadow-lg hover:bg-zinc-200 transition-colors"
-          >
-            Save as PDF
-          </button>
-        </div>
+          <div className="h-px w-8 bg-white/20 group-hover:bg-black/20 transition-colors" />
+        </button>
       </div>
     </div>
   );
