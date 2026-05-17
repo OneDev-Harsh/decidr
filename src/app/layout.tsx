@@ -22,8 +22,8 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Decidr — Decision Intelligence Platform",
-    template: "%s | Decidr",
+    default: "Decidr.",
+    template: "%s | Decidr.",
   },
   description:
     "Transform high-stakes uncertainty into auditable strategic clarity. AI-powered decision intelligence with multi-agent reasoning, scenario simulation, and cognitive blindspot auditing.",
@@ -36,8 +36,16 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Decidr" }],
   metadataBase: new URL("https://decidr.app"),
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" }
+    ],
+    apple: [
+      { url: "/icon.svg", type: "image/svg+xml" }
+    ],
+  },
   openGraph: {
-    title: "Decidr — Decision Intelligence Platform",
+    title: "Decidr — Enterprise Decision Intelligence",
     description:
       "Transform high-stakes uncertainty into auditable strategic clarity.",
     type: "website",
