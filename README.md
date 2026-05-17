@@ -60,7 +60,7 @@ npm install
 ### 3. Environment Configuration
 Create a `.env.local` file in the root directory and inject your **InsForge** backend credentials:
 ```env
-NEXT_PUBLIC_INSFORGE_URL=https://q85rkesr.ap-southeast.insforge.app
+NEXT_PUBLIC_INSFORGE_URL=your-insforge-url
 NEXT_PUBLIC_INSFORGE_ANON_KEY=your-insforge-anon-key
 ```
 
