@@ -4,12 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { insforge } from "@/lib/insforge";
-import { ArrowRight, Loader2 } from "lucide-react";
-import { Logo } from "@/components/shared/Logo";
+import { AuthInput, AuthButton } from "@/components/auth/AuthUI";
+import { ArrowRight, GitMerge, Share2 } from "lucide-react";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -37,10 +34,7 @@ export default function SignInPage() {
     }
 
     if (data?.accessToken) {
-      // Manually set the auth cookie for middleware as a fallback
       document.cookie = `insforge-auth-token=${data.accessToken}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
-      
-      // Use window.location.href for auth redirects to ensure middleware re-evaluates with new cookies
       const params = new URLSearchParams(window.location.search);
       const redirectTo = params.get("redirect") || "/dashboard";
       window.location.href = redirectTo;
@@ -48,72 +42,88 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black px-6 py-12">
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50%] h-[50%] bg-brand-maroon/10 blur-[150px] rounded-full" />
+    <div className="space-y-10">
+      <div className="space-y-3">
+        <motion.h2 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-3xl font-semibold tracking-tight text-white"
+        >
+          Sign In
+        </motion.h2>
+        <motion.p 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="text-zinc-500 text-[14px]"
+        >
+          Enter your credentials to continue.
+        </motion.p>
       </div>
 
-      <motion.div
+      <motion.form 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md relative z-10"
+        transition={{ delay: 0.4 }}
+        onSubmit={handleSubmit} 
+        className="space-y-6"
       >
-        <div className="mb-8 text-center flex justify-center">
-          <Link href="/">
-            <Logo size="lg" />
-          </Link>
+        <div className="space-y-4">
+          <AuthInput 
+            id="email" 
+            name="email" 
+            label="Email" 
+            type="email" 
+            placeholder="name@example.com" 
+            required 
+          />
+          <div className="space-y-2">
+            <AuthInput 
+              id="password" 
+              name="password" 
+              label="Password" 
+              type="password" 
+              placeholder="••••••••"
+              required 
+            />
+            <div className="flex justify-end">
+              <Link href="/forgot-password" title="Coming soon" className="text-[11px] uppercase tracking-widest font-bold text-zinc-600 hover:text-brand-crimson transition-colors">
+                Forgot Password?
+              </Link>
+            </div>
+          </div>
         </div>
 
-        <Card className="border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-white">Welcome back</CardTitle>
-            <CardDescription className="text-gray-400">
-              Sign in to your account to continue
-            </CardDescription>
-          </CardHeader>
-          <form onSubmit={handleSubmit}>
-            <CardContent className="grid gap-4">
-              <div className="grid gap-2">
-                <label className="text-sm font-medium text-gray-400" htmlFor="email">Email</label>
-                <Input id="email" name="email" type="email" placeholder="m@example.com" required />
-              </div>
-              <div className="grid gap-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-gray-400" htmlFor="password">Password</label>
-                  <Link href="/forgot-password" title="Coming soon" className="text-xs text-brand-crimson hover:underline">
-                    Forgot password?
-                  </Link>
-                </div>
-                <Input id="password" name="password" type="password" required />
-              </div>
-              {error && (
-                <div className="text-sm text-brand-crimson font-medium bg-brand-crimson/10 p-3 rounded-md border border-brand-crimson/20">
-                  {error}
-                </div>
-              )}
-            </CardContent>
-            <CardFooter className="flex flex-col gap-4">
-              <Button className="w-full group" disabled={loading}>
-                {loading ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <>
-                    Sign In
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </>
-                )}
-              </Button>
-              <div className="text-sm text-gray-400 text-center">
-                Don't have an account?{" "}
-                <Link href="/signup" className="text-brand-crimson hover:underline font-medium">
-                  Sign Up
-                </Link>
-              </div>
-            </CardFooter>
-          </form>
-        </Card>
-      </motion.div>
+        {error && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-[12px] font-bold uppercase tracking-wider text-brand-crimson bg-brand-crimson/5 border border-brand-crimson/20 p-4 rounded-lg flex items-center gap-3"
+          >
+            <div className="w-1 h-1 bg-brand-crimson rounded-full animate-pulse" />
+            {error}
+          </motion.div>
+        )}
+
+        <div className="pt-2">
+          <AuthButton loading={loading}>
+            Sign In
+          </AuthButton>
+        </div>
+      </motion.form>
+
+      <motion.p 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.7 }}
+        className="text-center text-zinc-600 text-[12px] font-medium pt-4"
+      >
+        Don't have an account?{" "}
+        <Link href="/signup" className="text-white hover:text-brand-crimson transition-colors underline underline-offset-4 decoration-zinc-800 hover:decoration-brand-crimson">
+          Sign Up
+        </Link>
+      </motion.p>
     </div>
   );
 }

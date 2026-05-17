@@ -46,9 +46,12 @@ import { DiscussionSection } from "@/components/app/DiscussionSection";
 import { CollaborationAvatars } from "@/components/app/CollaborationAvatars";
 import { ProposalsSection } from "@/components/app/ProposalsSection";
 import { ProjectTasksSection } from "@/components/app/ProjectTasksSection";
+
 import { ErrorBoundary } from "@/components/app/ErrorBoundary";
 import { motion, AnimatePresence } from "framer-motion";
 import { ReportGenerationModal } from "@/components/app/ReportGenerationModal";
+import { StrategicNavigation } from "@/components/app/StrategicNavigation";
+import { CommandPalette } from "@/components/app/CommandPalette";
 
 export default function ProjectPage() {
   const params = useParams();
@@ -68,6 +71,8 @@ export default function ProjectPage() {
   const [isOwnerOrAdmin, setIsOwnerOrAdmin] = useState(false);
   const [topCollaborators, setTopCollaborators] = useState<any[]>([]);
   const [tasks, setTasks] = useState<any[]>([]);
+  
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   
   // Form refs for auto-fill
   const formRef = useRef<HTMLFormElement>(null);
@@ -175,6 +180,17 @@ export default function ProjectPage() {
     }
   }, [projectId, router]);
 
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setIsCommandPaletteOpen(prev => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, []);
+
   const handleAnalysisComplete = (data: any) => {
     if (data.contradictions) {
       setContradictions(data.contradictions);
@@ -280,23 +296,54 @@ export default function ProjectPage() {
     );
   }
 
-  const tabs = [
+  const tabs: any[] = [
     { id: "context", name: "Context & Goals", icon: Target },
-    { id: "tasks", name: "Action Items", icon: ListTodo },
-    { id: "proposals", name: "Strategic Proposals", icon: GitPullRequest },
-    { id: "evidence", name: "Evidence & Sources", icon: Database },
-    { id: "blindspots", name: "Blindspot Audit", icon: EyeOff },
+    { 
+      id: "tasks", 
+      name: "Action Items", 
+      icon: ListTodo,
+      badge: tasks.filter(t => !t.is_completed).length > 0 ? tasks.filter(t => !t.is_completed).length : undefined
+    },
+    { 
+      id: "proposals", 
+      name: "Strategic Proposals", 
+      icon: GitPullRequest,
+      badge: project?._openProposals > 0 ? project?._openProposals : undefined
+    },
+    { 
+      id: "evidence", 
+      name: "Evidence & Sources", 
+      icon: Database,
+      badge: project?._evidenceCount > 0 ? project?._evidenceCount : undefined
+    },
+    { 
+      id: "blindspots", 
+      name: "Blindspot Audit", 
+      icon: EyeOff,
+      badge: project?.last_blindspots?.length > 0 ? project?.last_blindspots?.length : undefined
+    },
     { id: "scenarios", name: "Scenarios", icon: GitMerge },
     { id: "graph", name: "Knowledge Map", icon: Share2 },
     { id: "timeline", name: "Decision Timeline", icon: Clock },
-    { id: "contradictions", name: "Contradictions", icon: AlertTriangle },
+    { 
+      id: "contradictions", 
+      name: "Contradictions", 
+      icon: AlertTriangle, 
+      priority: "high", 
+      status: contradictions.length > 0 ? "active" : "idle" 
+    },
     { id: "debate", name: "Discussions", icon: MessageSquare },
-    { id: "recommendation", name: "Recommendation", icon: CheckCircle },
+    { 
+      id: "recommendation", 
+      name: "Recommendation", 
+      icon: CheckCircle, 
+      priority: "high" 
+    },
   ];
 
   return (
     <div className="flex-1 flex flex-col h-full bg-black">
-      <div className="shrink-0 border-b border-white/10 bg-black px-8 pt-8 sticky top-0 z-40">
+      <div className="shrink-0 border-b border-white/10 bg-black/80 backdrop-blur-xl px-8 pt-8 sticky top-0 z-40 transition-all duration-300">
         <div className="max-w-[1200px] mx-auto">
           <div className="mb-6">
             <Link href={`/workspaces/${project?.workspace_id}`} className="text-[13px] font-medium text-zinc-500 hover:text-white flex items-center transition-colors w-fit">
@@ -327,59 +374,20 @@ export default function ProjectPage() {
             </div>
           </div>
 
-          <div className="mt-8 flex space-x-6 overflow-x-auto no-scrollbar relative top-[1px]">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center pb-3 text-[14px] font-medium transition-colors whitespace-nowrap border-b-2 ${
-                  activeTab === tab.id
-                    ? "text-white border-white"
-                    : "text-zinc-500 hover:text-zinc-300 border-transparent"
-                }`}
-              >
-                <tab.icon className={`mr-2 h-4 w-4 ${activeTab === tab.id ? "text-white" : "text-zinc-500"}`} /> {tab.name}
-                {tab.id === 'tasks' && tasks.filter(t => !t.is_completed).length > 0 && (
-                  <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] ${activeTab === tab.id ? "bg-amber-500/20 text-amber-400" : "bg-white/5 text-zinc-500"}`}>
-                    {tasks.filter(t => !t.is_completed).length}
-                  </span>
-                )}
-                {tab.id === 'proposals' && project?._openProposals > 0 && (
-                  <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] ${activeTab === tab.id ? "bg-emerald-500/20 text-emerald-400" : "bg-white/5 text-zinc-500"}`}>
-                    {project._openProposals}
-                  </span>
-                )}
-                {tab.id === 'evidence' && project?._evidenceCount > 0 && (
-                  <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] ${activeTab === tab.id ? "bg-white/10 text-white" : "bg-white/5 text-zinc-500"}`}>
-                    {project._evidenceCount}
-                  </span>
-                )}
-                {tab.id === 'blindspots' && project?.last_blindspots?.length > 0 && (
-                  <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] ${activeTab === tab.id ? "bg-red-500/20 text-red-400 border border-red-500/20" : "bg-white/5 text-zinc-500"}`}>
-                    {project.last_blindspots.length}
-                  </span>
-                )}
-                {tab.id === 'scenarios' && project?.last_scenarios?.length > 0 && (
-                  <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] ${activeTab === tab.id ? "bg-white/10 text-white" : "bg-white/5 text-zinc-500"}`}>
-                    {project.last_scenarios.length}
-                  </span>
-                )}
-                {tab.id === 'recommendation' && project?.status === 'DECIDED' && (
-                  <CheckCircle2 className="ml-2 h-3 w-3 text-emerald-500" />
-                )}
-                {tab.id === 'contradictions' && contradictions.length > 0 && (
-                  <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] ${activeTab === tab.id ? "bg-red-500 text-white" : "bg-red-500/20 text-red-400"}`}>
-                    {contradictions.length}
-                  </span>
-                )}
-                {tab.id === 'debate' && project?._unresolvedComments > 0 && (
-                  <span className="ml-2 h-2 w-2 rounded-full bg-brand-maroon animate-pulse" />
-                )}
-              </button>
-            ))}
-          </div>
+          <StrategicNavigation 
+            tabs={tabs} 
+            activeTab={activeTab} 
+            onTabChange={setActiveTab} 
+          />
         </div>
       </div>
+
+      <CommandPalette 
+        isOpen={isCommandPaletteOpen} 
+        onClose={() => setIsCommandPaletteOpen(false)} 
+        tabs={tabs} 
+        onSelect={setActiveTab} 
+      />
 
       <div className="flex-1 p-8 overflow-y-auto">
         <AnimatePresence mode="wait">
@@ -714,6 +722,7 @@ export default function ProjectPage() {
                     />
                   </ErrorBoundary>
                 )}
+
 
                 {activeTab === "evidence" && <ErrorBoundary fallbackTitle="Evidence Manager Error"><EvidenceManager projectId={projectId} /></ErrorBoundary>}
                 {activeTab === "blindspots" && <ErrorBoundary fallbackTitle="Blindspot Analysis Error"><BlindspotAnalysis project={project} onAnalysisComplete={handleAnalysisComplete} /></ErrorBoundary>}

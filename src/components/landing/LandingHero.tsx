@@ -38,7 +38,7 @@ export function LandingHero() {
             transition={{ delay: 0.4, duration: 0.6 }}
             className="text-zinc-500 uppercase tracking-[0.5em] text-xs font-bold mt-4"
           >
-            Operational Intelligence
+            Project Intelligence
           </motion.p>
           
           {/* Subtle glow behind the logo */}
@@ -52,7 +52,7 @@ export function LandingHero() {
           transition={{ delay: 1, duration: 0.6 }}
           className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
         >
-          <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-500">Scroll to Explore</span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-500">Scroll Down</span>
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
@@ -72,34 +72,27 @@ export function LandingHero() {
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             >
-              <div className="flex justify-center mb-10">
-                <div className="inline-flex items-center rounded-full px-5 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-400 border border-white/10 bg-white/5 backdrop-blur-md">
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  <span>The Intelligence Operating System</span>
-                </div>
-              </div>
-
               <h2 className="text-5xl md:text-8xl lg:text-[10rem] font-black tracking-tighter text-white mb-12 leading-[0.9] uppercase">
-                Complexity <br /> Into Clarity.
+                Clear <br /> Decisions.
               </h2>
 
               <p className="text-xl md:text-3xl text-zinc-300 mb-16 max-w-3xl mx-auto leading-relaxed font-medium">
-                The global intelligence platform for high-stakes decisions. 
-                Synchronize workflows, simulate outcomes, and act with absolute finality.
+                A simple platform for complex projects. 
+                Keep your team aligned, track your evidence, and move forward with confidence.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-8">
                 <Button size="lg" className="h-16 px-12 bg-white hover:bg-zinc-200 text-black font-black uppercase tracking-widest rounded-full transition-all hover:scale-105 shadow-2xl" asChild>
                   <Link href="/signup">
-                    Deploy Decidr
+                    Get Started
                     <ArrowRight className="ml-3 h-5 w-5" />
                   </Link>
                 </Button>
                 <Link
-                  href="#solutions"
+                  href="#features"
                   className="text-sm font-bold uppercase tracking-[0.3em] text-zinc-400 hover:text-white transition-colors py-4"
                 >
-                  System Specifications
+                  View Features
                 </Link>
               </div>
             </motion.div>

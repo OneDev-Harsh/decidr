@@ -3,13 +3,10 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { insforge } from "@/lib/insforge";
-import { ArrowRight, Loader2, Mail } from "lucide-react";
+import { AuthInput, AuthButton } from "@/components/auth/AuthUI";
+import { ArrowRight, Loader2, Mail, ShieldCheck } from "lucide-react";
 import Link from "next/link";
-import { Logo } from "@/components/shared/Logo";
 
 function VerifyEmailForm() {
   const router = useRouter();
@@ -49,7 +46,8 @@ function VerifyEmailForm() {
     }
 
     if (data?.accessToken) {
-      router.push("/dashboard");
+      document.cookie = `insforge-auth-token=${data.accessToken}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+      window.location.href = "/dashboard";
     }
   }
 
@@ -75,114 +73,115 @@ function VerifyEmailForm() {
   }
 
   return (
-    <Card className="border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl">
-      <CardHeader className="space-y-1 text-center pb-8">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-maroon/20 mb-4">
-          <Mail className="h-6 w-6 text-brand-crimson" />
-        </div>
-        <CardTitle className="text-2xl font-bold text-white">Check your email</CardTitle>
-        <CardDescription className="text-gray-400">
-          We've sent a 6-digit verification code to <br />
-          <span className="font-medium text-white">{email || "your email"}</span>
-        </CardDescription>
-      </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="grid gap-4">
+    <div className="space-y-10">
+      <div className="space-y-3">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="w-12 h-12 bg-brand-crimson/10 border border-brand-crimson/20 rounded-xl flex items-center justify-center mb-6"
+        >
+          <ShieldCheck className="h-6 w-6 text-brand-crimson" />
+        </motion.div>
+        <motion.h2 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-3xl font-semibold tracking-tight text-white"
+        >
+          Verify Email
+        </motion.h2>
+        <motion.p 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="text-zinc-500 text-[14px] leading-relaxed"
+        >
+          We've sent a verification code to <span className="text-white font-medium">{email || "your email"}</span>.
+        </motion.p>
+      </div>
+
+      <motion.form 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        onSubmit={handleSubmit} 
+        className="space-y-6"
+      >
+        <div className="space-y-4">
           {!emailParam && (
-            <div className="grid gap-2">
-              <label className="text-sm font-medium text-gray-400" htmlFor="email">Email</label>
-              <Input 
-                id="email" 
-                name="email" 
-                type="email" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required 
-              />
-            </div>
-          )}
-          <div className="grid gap-2">
-            <label className="text-sm font-medium text-gray-400" htmlFor="otp">Verification Code</label>
-            <Input 
-              id="otp" 
-              name="otp" 
-              type="text" 
-              placeholder="123456" 
-              maxLength={6}
-              className="text-center text-lg tracking-widest font-mono"
+            <AuthInput 
+              id="email" 
+              name="email" 
+              label="Email" 
+              type="email" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required 
             />
-          </div>
-          
-          {error && (
-            <div className="text-sm text-brand-crimson font-medium bg-brand-crimson/10 p-3 rounded-md border border-brand-crimson/20">
-              {error}
-            </div>
           )}
-          {message && (
-            <div className="text-sm text-emerald-500 font-medium bg-emerald-500/10 p-3 rounded-md border border-emerald-500/20">
-              {message}
-            </div>
-          )}
-        </CardContent>
-        <CardFooter className="flex flex-col gap-4">
-          <Button className="w-full group" disabled={loading || !email}>
-            {loading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <>
-                Verify Email
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </>
-            )}
-          </Button>
-          <div className="text-sm text-gray-400 text-center flex flex-col gap-2">
-            <div>
-              Didn't receive the code?{" "}
-              <button 
-                type="button" 
-                onClick={handleResend}
-                disabled={resendLoading || !email}
-                className="text-brand-crimson hover:underline font-medium disabled:opacity-50"
-              >
-                {resendLoading ? "Sending..." : "Resend"}
-              </button>
-            </div>
-            <div>
-              <Link href="/login" className="text-gray-500 hover:text-white transition-colors">
-                Back to sign in
-              </Link>
-            </div>
-          </div>
-        </CardFooter>
-      </form>
-    </Card>
+          <AuthInput 
+            id="otp" 
+            name="otp" 
+            label="Verification Code" 
+            type="text" 
+            placeholder="000000" 
+            maxLength={6}
+            className="text-center text-xl tracking-[0.5em] font-mono bg-zinc-900/50 border border-white/5 rounded-lg px-4 py-4 text-white outline-none focus:border-brand-crimson/50 transition-all"
+            required 
+          />
+        </div>
+
+        {error && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-[12px] font-bold uppercase tracking-wider text-brand-crimson bg-brand-crimson/5 border border-brand-crimson/20 p-4 rounded-lg flex items-center gap-3"
+          >
+            <div className="w-1 h-1 bg-brand-crimson rounded-full animate-pulse" />
+            {error}
+          </motion.div>
+        )}
+
+        {message && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-[12px] font-bold uppercase tracking-wider text-emerald-500 bg-emerald-500/5 border border-emerald-500/20 p-4 rounded-lg flex items-center gap-3"
+          >
+            <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
+            {message}
+          </motion.div>
+        )}
+
+        <div className="pt-2">
+          <AuthButton loading={loading}>
+            Verify Email
+          </AuthButton>
+        </div>
+      </motion.form>
+
+      <div className="flex flex-col items-center gap-4">
+        <button 
+          type="button" 
+          onClick={handleResend}
+          disabled={resendLoading || !email}
+          className="text-[11px] uppercase tracking-widest font-bold text-zinc-500 hover:text-white transition-colors disabled:opacity-30"
+        >
+          {resendLoading ? "Sending..." : "Resend Code"}
+        </button>
+        
+        <Link href="/login" className="text-[11px] uppercase tracking-widest font-bold text-zinc-700 hover:text-zinc-400 transition-colors">
+          Cancel
+        </Link>
+      </div>
+    </div>
   );
 }
 
 export default function VerifyEmailPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black px-6 py-12">
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50%] h-[50%] bg-brand-maroon/10 blur-[150px] rounded-full" />
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md relative z-10"
-      >
-        <div className="mb-8 text-center flex justify-center">
-          <Link href="/">
-            <Logo size="lg" />
-          </Link>
-        </div>
-
-        <Suspense fallback={<div className="flex justify-center p-8"><Loader2 className="h-8 w-8 animate-spin text-brand-crimson" /></div>}>
-          <VerifyEmailForm />
-        </Suspense>
-      </motion.div>
-    </div>
+    <Suspense fallback={<div className="flex justify-center p-8"><Loader2 className="h-8 w-8 animate-spin text-brand-crimson" /></div>}>
+      <VerifyEmailForm />
+    </Suspense>
   );
 }

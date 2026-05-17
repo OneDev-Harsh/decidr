@@ -14,24 +14,25 @@ export function Navbar() {
       className="fixed top-0 z-[100] w-full border-b border-white/[0.05] bg-black/40 backdrop-blur-2xl"
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          <div className="flex items-center">
-            <Link href="/" className="hover:opacity-80 transition-opacity">
+        <div className="flex h-20 items-center justify-between">
+          <div className="flex items-center gap-6">
+            <Link href="/" className="hover:opacity-80 transition-opacity flex items-center gap-6">
               <Logo size="sm" />
             </Link>
           </div>
           
-          <div className="hidden md:flex items-center gap-10">
+          <div className="hidden md:flex items-center gap-8">
             {[
-              { name: "Platform", href: "#features" },
-              { name: "Solutions", href: "#solutions" },
-              { name: "Intelligence", href: "#intelligence" },
-              { name: "Governance", href: "#governance" },
+              { name: "Platform", href: "/platform" },
+              { name: "Solutions", href: "/solutions" },
+              { name: "Intelligence", href: "/intelligence" },
+              { name: "Governance", href: "/governance" },
+              { name: "Docs", href: "/docs" },
             ].map((item) => (
               <Link 
                 key={item.name} 
-                href={item.href} 
-                className="text-[13px] font-bold uppercase tracking-[0.2em] text-zinc-500 hover:text-white transition-colors"
+                href={item.href}
+                className="text-[11px] font-bold text-zinc-400 hover:text-white transition-colors uppercase tracking-[0.2em]"
               >
                 {item.name}
               </Link>
@@ -39,16 +40,21 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center gap-6">
-            <Link href="/login" className="text-[13px] font-bold uppercase tracking-[0.2em] text-zinc-500 hover:text-white transition-colors">
-              Sign in
+            <Link 
+              href="/login"
+              className="text-[11px] font-bold text-zinc-400 hover:text-white transition-colors uppercase tracking-widest"
+            >
+              Sign In
             </Link>
-            <Button size="sm" className="h-9 px-6 bg-white hover:bg-zinc-200 text-black font-bold rounded-full transition-all hover:scale-105" asChild>
-              <Link href="/signup">Get Started</Link>
-            </Button>
+            <Link 
+              href="/signup"
+              className="px-6 py-2 bg-white text-black text-[11px] font-black uppercase tracking-widest rounded-full hover:bg-zinc-200 transition-all shadow-xl"
+            >
+              Get Started
+            </Link>
           </div>
         </div>
       </div>
     </motion.nav>
   );
-}
 
